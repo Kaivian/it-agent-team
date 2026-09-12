@@ -1,0 +1,12 @@
+{
+  "name": "agent-team",
+  "version": "1.0.0",
+  "description": "Multi-agent autonomous engineering team plugin for Antigravity and Gemini CLI",
+  "author": {
+    "name": "Kaivian",
+    "url": "https://github.com/Kaivian"
+  },
+  "license": "MIT",
+  "entrypoint": "skills/agent-team/SKILL.md",
+  "repository": "https://github.com/Kaivian/gemini-agent-team"
+}

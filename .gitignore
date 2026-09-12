@@ -1,0 +1,37 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Testing and cache directories
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Logs
+*.log
+
+# Operating System files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Secrets and credentials
+.env
+*.pem
+*.key
+
+# Agent Team runtime session data and ephemeral artifacts
+tasks.md
+LOG.md
+TECHNICAL_SPEC.md
+CRITIQUE_REPORT.md
+QA_REPORT.md
+SECURITY_REPORT.md
+.agent_team/

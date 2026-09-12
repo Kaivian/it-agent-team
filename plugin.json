@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "name": "agent-team",
+  "version": "1.0.0",
+  "description": "Multi-agent autonomous engineering team with supervisor control plane, quality gates, and parallel sub-coders",
+  "author": {
+    "name": "Kaivian",
+    "url": "https://github.com/Kaivian"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Kaivian/gemini-agent-team.git"
+  },
+  "homepage": "https://github.com/Kaivian/gemini-agent-team#readme",
+  "keywords": [
+    "gemini",
+    "antigravity",
+    "multi-agent",
+    "orchestration",
+    "supervisor",
+    "claude-code",
+    "code-generation",
+    "sub-coders"
+  ],
+  "agents": [
+    "agents/supervisor-agent.md",
+    "agents/orchestrator-agent.md",
+    "agents/pm-agent.md",
+    "agents/critic-agent.md",
+    "agents/sub-coder.md",
+    "agents/qa-agent.md",
+    "agents/security-agent.md",
+    "agents/debugger-agent.md",
+    "agents/doc-refactor-agent.md",
+    "agents/devops-infra-agent.md"
+  ],
+  "skills": [
+    "skills/agent-team"
+  ],
+  "scripts": {
+    "doctor": "python scripts/doctor.py"
+  }
+}
