@@ -1,13 +1,27 @@
 ---
 name: agent-team-batch
-description: Alias for agent-team-multi-task. Executes a batch of tasks sequentially across isolated lifecycle sessions.
+description: Coordinates execution of multiple tasks sequentially through isolated full-lifecycle sessions using task-dispatcher-agent.
 argument-hint: ["[multi-task-list] [--auto] [--concurrency <N>] [--dry-run]"]
 ---
 
 # /agent-team-batch
 
-Alias for `/agent-team-multi-task`. Ingests and executes a batch of tasks sequentially with isolated session lifecycles.
+Execute multiple development tasks sequentially, each within its own isolated Agent Team lifecycle session.
+
+## Overview
+`/agent-team-batch` triggers the `task-dispatcher-agent` to manage a persistent FIFO queue (`.agent_team/task_queue.json`). Rather than running tasks concurrently and colliding, each task executes sequentially through the full 7-step engineering lifecycle before the next task begins.
 
 ## Usage
-- Run `/agent-team-batch "1. Setup authentication\n2. Implement rate limiting\n3. Add unit tests"`
-- Supports identical options and sequential isolation behavior as `/agent-team-multi-task`.
+- Run `/agent-team-batch "1. Create Postgres schema\n2. Add REST API endpoints\n3. Write integration tests"`
+- Options:
+  - `--auto`: Run all queued tasks in autonomous Auto Mode without human pauses.
+  - `--concurrency <N>`: Maximum parallel sub-coders per session (default: 4).
+  - `--dry-run`: Generate specifications for all tasks without file modifications.
+
+## Sequential Execution Lifecycle
+1. Batch Ingestion: `task-dispatcher-agent` parses the task list into `.agent_team/task_queue.json`.
+2. Session N Initialization: Spawns fresh session (`EXEC-...-BATCH-00N`) with `supervisor-agent`.
+3. End-to-End Delivery: Runs Discovery -> Spec -> Critic -> Parallel Sub-Coders -> QA & Security Audit -> Code Freeze.
+4. Clean Session Reset: Resets `tasks.md` cleanly and marks Task N `COMPLETED`.
+5. Automatic Progression: Advances to Task N+1 until queue is drained.
+6. Batch Summary: Emits consolidated batch completion report.

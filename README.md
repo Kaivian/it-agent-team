@@ -178,7 +178,7 @@ python scripts/doctor.py
 - Git CLI: Verifies git executable availability in system PATH.
 - Manifest Validation: Confirms JSON schema validity for `plugin.json`, `gemini-extension.json`, and `.claude-plugins/marketplace.json`.
 - Agent Roster Integrity: Confirms presence and non-empty status of all 12 agent specifications in `agents/`.
-- Skills Roster Integrity: Confirms presence and non-empty status of all 5 command skills in `skills/`.
+- Skills Roster Integrity: Confirms presence and non-empty status of all 4 command skills in `skills/`.
 
 Output uses structured bracketed tags (`[PASS]`, `[WARN]`, `[FAIL]`) and returns exit code `0` on success or `1` on failure.
 
@@ -186,7 +186,7 @@ Output uses structured bracketed tags (`[PASS]`, `[WARN]`, `[FAIL]`) and returns
 
 ## Slash Command Suite & Usage Guide
 
-IT Agent Team provides a suite of 5 dedicated slash commands tailored for interactive pair-programming, hands-off autonomous execution, and sequential multi-task batch dispatch:
+IT Agent Team provides a suite of 4 dedicated slash commands tailored for interactive pair-programming, hands-off autonomous execution, and sequential multi-task batch dispatch:
 
 ### Command Overview
 
@@ -194,8 +194,7 @@ IT Agent Team provides a suite of 5 dedicated slash commands tailored for intera
 | :--- | :--- | :--- | :--- | :--- |
 | `/agent-team "<task>"` | Standard Interactive | Interactive Modal Q&A | Single Session | Complex tasks requiring explicit human requirements confirmation. |
 | `/agent-team-auto "<task>"` | Autonomous Auto Mode | Zero (User Proxy surrogate) | Single Session | Fast, unattended task delivery with automatic decision resolution. |
-| `/agent-team-multi-task "<list>"` | Multi-Task Sequential Queue | Interactive per task | Sequential FIFO Sessions | Batches of numbered/bulleted tasks executed in isolated lifecycles. |
-| `/agent-team-batch "<list>"` | Multi-Task Queue (Alias) | Interactive per task | Sequential FIFO Sessions | Convenient short alias for `/agent-team-multi-task`. |
+| `/agent-team-batch "<list>"` | Multi-Task Queue | Interactive per task | Sequential FIFO Sessions | Batches of numbered/bulleted tasks executed in isolated lifecycles. |
 | `/agent-team-auto-batch "<list>"` | Autonomous Batch Queue | Zero (User Proxy surrogate) | Sequential FIFO Sessions | 100% hands-off sequential execution across all tasks in the queue. |
 
 ---
@@ -209,22 +208,14 @@ Runs the full engineering workflow without asking any clarifying questions. The 
 /agent-team-auto "Implement JWT authentication with refresh token rotation and argon2 password hashing"
 ```
 
-#### 2. Sequential Multi-Task Queue (`/agent-team-multi-task` or `/agent-team-batch`)
+#### 2. Sequential Multi-Task Queue (`/agent-team-batch`)
 Ingests multiple development tasks and executes them sequentially. Each task runs through its own isolated full-lifecycle session (Phase 0 to Phase 6) before resetting `tasks.md` and launching the next task:
 
 ```bash
-/agent-team-multi-task "1. Create PostgreSQL schema and Alembic migrations
+/agent-team-batch "1. Create PostgreSQL schema and Alembic migrations
 2. Implement CRUD repository and service layer
 3. Add REST API endpoints with Pydantic validation
 4. Write comprehensive integration and regression tests"
-```
-
-Or using the shorter alias:
-
-```bash
-/agent-team-batch "1. Setup Redis caching layer
-2. Add cache-aside middleware to GET endpoints
-3. Add cache invalidation hooks on mutation routes"
 ```
 
 #### 3. Autonomous Multi-Task Batch (`/agent-team-auto-batch`)

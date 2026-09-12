@@ -38,6 +38,5 @@ When multiple tasks are provided (e.g. numbered list, milestone items, or `--bat
 ## Dedicated Slash Commands
 In addition to `/agent-team`, dedicated shortcut commands are available:
 - `/agent-team-auto "<task>"`: Runs directly in 100% autonomous Auto Mode (no human confirmation).
-- `/agent-team-multi-task "<tasks>"`: Runs multiple tasks sequentially in isolated sessions.
-- `/agent-team-batch "<tasks>"`: Fast alias for `/agent-team-multi-task`.
+- `/agent-team-batch "<tasks>"`: Runs multiple tasks sequentially in isolated full-lifecycle sessions.
 - `/agent-team-auto-batch "<tasks>"`: Fully autonomous sequential multi-task batch execution.

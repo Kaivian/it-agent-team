@@ -44,7 +44,6 @@
   "skills": [
     "skills/agent-team",
     "skills/agent-team-auto",
-    "skills/agent-team-multi-task",
     "skills/agent-team-batch",
     "skills/agent-team-auto-batch"
   ],

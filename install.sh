@@ -127,7 +127,7 @@ fi
 if [ -d "${PLUGIN_SKILLS_DIR}" ]; then
     mkdir -p "${GLOBAL_SKILLS_DIR}"
     cp -R "${PLUGIN_SKILLS_DIR}/"* "${GLOBAL_SKILLS_DIR}/"
-    echo "  [PASS] Synchronized 5 command skills to ${GLOBAL_SKILLS_DIR}"
+    echo "  [PASS] Synchronized 4 command skills to ${GLOBAL_SKILLS_DIR}"
 fi
 
 # --------------------------------------------------
@@ -162,9 +162,8 @@ echo ""
 echo "Available Slash Commands:"
 echo "  1. /agent-team \"<task>\"            Standard interactive mode (with Q&A modal)"
 echo "  2. /agent-team-auto \"<task>\"       Autonomous Auto Mode (zero human interruption)"
-echo "  3. /agent-team-multi-task \"<list>\" Sequential queue (fresh session per task)"
-echo "  4. /agent-team-batch \"<list>\"      Alias for /agent-team-multi-task"
-echo "  5. /agent-team-auto-batch \"<list>\" Fully autonomous multi-task batch queue"
+echo "  3. /agent-team-batch \"<list>\"      Sequential queue (fresh session per task)"
+echo "  4. /agent-team-auto-batch \"<list>\" Fully autonomous multi-task batch queue"
 echo ""
 echo "Marketplace Catalog:"
 echo "  Path: ${TARGET_DIR}/.claude-plugins/marketplace.json"

@@ -145,7 +145,7 @@ if (Test-Path $pluginSkillsDir) {
         New-Item -ItemType Directory -Path $globalSkillsDir -Force | Out-Null
     }
     Copy-Item -Path (Join-Path $pluginSkillsDir "*") -Destination $globalSkillsDir -Recurse -Force
-    Write-Host "  [PASS] Synchronized 5 command skills to $globalSkillsDir"
+    Write-Host "  [PASS] Synchronized 4 command skills to $globalSkillsDir"
 }
 
 # --------------------------------------------------
@@ -185,9 +185,8 @@ Write-Host ""
 Write-Host "Available Slash Commands:"
 Write-Host "  1. /agent-team `"<task>`"            Standard interactive mode (with Q&A modal)"
 Write-Host "  2. /agent-team-auto `"<task>`"       Autonomous Auto Mode (zero human interruption)"
-Write-Host "  3. /agent-team-multi-task `"<list>`" Sequential queue (fresh session per task)"
-Write-Host "  4. /agent-team-batch `"<list>`"      Alias for /agent-team-multi-task"
-Write-Host "  5. /agent-team-auto-batch `"<list>`" Fully autonomous multi-task batch queue"
+Write-Host "  3. /agent-team-batch `"<list>`"      Sequential queue (fresh session per task)"
+Write-Host "  4. /agent-team-auto-batch `"<list>`" Fully autonomous multi-task batch queue"
 Write-Host ""
 Write-Host "Marketplace Catalog:"
 Write-Host "  Path: $resolvedTarget\.claude-plugins\marketplace.json"

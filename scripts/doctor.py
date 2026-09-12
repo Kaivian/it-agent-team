@@ -38,7 +38,6 @@ MANIFEST_FILES = [
 EXPECTED_SKILLS = [
     "agent-team",
     "agent-team-auto",
-    "agent-team-multi-task",
     "agent-team-batch",
     "agent-team-auto-batch",
 ]
