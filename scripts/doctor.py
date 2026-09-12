@@ -26,6 +26,7 @@ EXPECTED_AGENTS = [
     "doc-refactor-agent.md",
     "devops-infra-agent.md",
     "user-proxy-agent.md",
+    "task-dispatcher-agent.md",
 ]
 
 MANIFEST_FILES = [

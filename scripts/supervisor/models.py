@@ -90,3 +90,25 @@ class IncidentRecord:
         default_factory=lambda: datetime.now(timezone.utc).isoformat()
     )
     resolved_at: Optional[str] = None
+
+
+@dataclass
+class QueueTaskItem:
+    item_id: str
+    title: str
+    description: str
+    status: TaskStatus = TaskStatus.PENDING
+    session_id: Optional[str] = None
+    started_at: Optional[str] = None
+    completed_at: Optional[str] = None
+
+
+@dataclass
+class TaskQueueBatch:
+    batch_id: str
+    tasks: list[QueueTaskItem] = field(default_factory=list)
+    current_index: int = 0
+    status: str = "IN_PROGRESS"
+    created_at: str = field(
+        default_factory=lambda: datetime.now(timezone.utc).isoformat()
+    )

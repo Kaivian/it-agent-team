@@ -6,9 +6,9 @@ Autonomous Multi-Agent IT Engineering Framework for Antigravity, Gemini CLI, Cla
 
 ## Executive Summary
 
-IT Agent Team is an enterprise-grade, multi-platform autonomous multi-agent software engineering framework. It orchestrates a specialized roster of 10 autonomous agents through a deterministic, contract-driven engineering lifecycle.
+IT Agent Team is an enterprise-grade, multi-platform autonomous multi-agent software engineering framework. It orchestrates a specialized roster of 12 autonomous agents through a deterministic, contract-driven engineering lifecycle.
 
-The framework decouples the Out-of-Band Control Plane (Supervisor, Event Bus, Durable State Store, Physical Concurrency Lock Manager) from the In-Band Execution Engine (Orchestrator, Product Manager, Critic, Parallel Sub-Coders, QA Functional Lead, Security Auditor, Debugger, and Documentation). By enforcing mathematical task sizing (N <= 5 files per sub-coder) and non-overlapping file allowlists, IT Agent Team delivers parallel execution with zero write collisions, comprehensive double-audit quality gates, and automated crash recovery.
+The framework decouples the Out-of-Band Control Plane (Supervisor, Event Bus, Durable State Store, Physical Concurrency Lock Manager, Multi-Task Queue Dispatcher) from the In-Band Execution Engine (Orchestrator, Product Manager, User Proxy, Critic, Parallel Sub-Coders, QA Functional Lead, Security Auditor, Debugger, DevOps, and Documentation). By enforcing mathematical task sizing (N <= 5 files per sub-coder), non-overlapping file allowlists, and sequential multi-task session isolation, IT Agent Team delivers parallel execution with zero write collisions, comprehensive double-audit quality gates, and automated crash recovery.
 
 ---
 
@@ -37,7 +37,11 @@ IT Agent Team is engineered from the ground up for true cross-platform universal
 
 ```mermaid
 flowchart TD
-    User["User Request / Goal"] --> Supervisor["Supervisor Agent<br/>Out-of-Band Control Plane & Watchdog"]
+    User["User Request / Multi-Task Goal"] --> QueueCheck{"Multiple Tasks (--batch)?"}
+    QueueCheck -- "Yes (Batch Mode)" --> Dispatcher["Task Dispatcher Agent<br/>FIFO Persistent Queue Coordinator"]
+    QueueCheck -- "No (Single Task)" --> Supervisor["Supervisor Agent<br/>Out-of-Band Control Plane & Watchdog"]
+    
+    Dispatcher -->|"Session N: Isolated Lifecycle"| Supervisor
     Supervisor --> EventBus["Event Bus & State Store<br/>SQLite WAL & Chronological Audit Log"]
     
     subgraph PlanningPhase ["Planning & Discovery"]
@@ -67,6 +71,10 @@ flowchart TD
         Doc --> DevOps["DevOps & Infra Agent<br/>Packaging, Diagnostics & Git Deployment"]
     end
 
+    DevOps -->|"Session Complete (Release / Frozen)"| DrainedCheck{"More Tasks in Queue?"}
+    DrainedCheck -- "Yes: Advance to Task N+1" --> Dispatcher
+    DrainedCheck -- "No: Batch Completed" --> Complete["Final Batch Summary Published"]
+
     EventBus -. "Telemetry & Monitoring" .-> PM
     EventBus -. "Disjoint File Locks" .-> SubCoders
     EventBus -. "Audit Records" .-> QA
@@ -77,10 +85,11 @@ flowchart TD
 
 ## Complete Agent Roster
 
-The framework employs 11 specialized agent roles across the entire software delivery lifecycle:
+The framework employs 12 specialized agent roles across the entire software delivery lifecycle:
 
 | Agent Identifier | Role | Core Responsibilities | Recommended Model Tier |
 | :--- | :--- | :--- | :--- |
+| task-dispatcher-agent | Multi-Task Sequential Queue Coordinator | Parses multi-task batches, maintains persistent FIFO task queue, initializes isolated Agent Team sessions sequentially per task. | High-Context Generalist (Gemini 2.5 Pro / Claude 3.7 Sonnet) |
 | supervisor-agent | Out-of-Band Control Plane & Observability | State store management (SQLite/JSON), audit logging, file guard and concurrency locks, system telemetry, heartbeat monitoring. | Flagship Reasoning (Gemini 2.5 Pro / Claude 3.7 Sonnet) |
 | orchestrator-agent | In-Band Workflow & DAG Coordination | Execution DAG scheduling, agent dispatch, task lifecycle tracking, inter-agent message routing, phase transition management. | Flagship Reasoning (Gemini 2.5 Pro / Claude 3.7 Sonnet) |
 | pm-agent | Requirements Discovery & Spec Authoring | Problem framing, user intent clarification, technical specification authoring, sub-coder task sizing (N <= 5 files/agent). | High-Context Generalist (Gemini 2.5 Pro / Claude 3.7 Sonnet) |
@@ -168,7 +177,7 @@ python scripts/doctor.py
 - SQLite3 Engine: Validates built-in SQLite3 engine availability.
 - Git CLI: Verifies git executable availability in system PATH.
 - Manifest Validation: Confirms JSON schema validity for `plugin.json`, `gemini-extension.json`, and `.claude-plugins/marketplace.json`.
-- Agent Roster Integrity: Confirms presence and non-empty status of all 11 agent specifications in `agents/`.
+- Agent Roster Integrity: Confirms presence and non-empty status of all 12 agent specifications in `agents/`.
 
 Output uses structured bracketed tags (`[PASS]`, `[WARN]`, `[FAIL]`) and returns exit code `0` on success or `1` on failure.
 
@@ -184,7 +193,21 @@ Activate the multi-agent workflow using the `/agent-team` skill command:
 
 ### Common Commands:
 
-Auto Mode (100% Hands-Off - User Proxy Agent resolves all trade-offs without human confirmation):
+Multi-Task Batch Mode (Sequential Execution - Isolated Clean Session per Task):
+```bash
+/agent-team "1. Create user authentication module
+2. Add rate limiting middleware
+3. Write integration test suite" --batch
+```
+
+Multi-Task Batch with Auto Mode (100% Autonomous, Sequential Isolated Lifecycles):
+```bash
+/agent-team "1. Setup Postgres schema
+2. Implement CRUD endpoints
+3. Generate OpenAPI spec" --batch --auto
+```
+
+Auto Mode (Single Task - User Proxy Agent resolves all trade-offs without human confirmation):
 ```bash
 /agent-team "Build secure multi-tenant authentication with RBAC and refresh tokens" --auto
 ```

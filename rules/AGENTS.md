@@ -141,6 +141,18 @@ The system operates across three distinct architectural layers:
   - Read-only advisor; forbidden from directly modifying product source code or manifests.
   - Must supply concrete, structured answers for every question without ambiguity.
 
+### 2.11. Task Dispatcher Agent (Multi-Task Queue Coordinator)
+- **Role**: Batch task ingestion, FIFO queue coordination, and sequential multi-session lifecycle dispatcher.
+- **Strict Authority**:
+  - Ingests multi-task batches or numbered goal lists from user requests.
+  - Converts multi-task requests into a persistent, structured task queue (`.agent_team/task_queue.json`).
+  - Spawns an isolated, dedicated execution session (`EXEC-YYYY-MM-DD-BATCH-XXX`) for Task N.
+  - Supervizes Task N through full lifecycle completion (Supervisor startup, PM spec, parallel coding, QA/Security double-audit, code freeze).
+  - Automatically resets the session board (`tasks.md`) and transitions to Task N+1 only after Task N passes 100% of quality gates.
+- **Strict Constraints**:
+  - Must execute tasks sequentially (one active session at a time) to prevent context pollution and file contention.
+  - Never advance the queue while the current task has unaddressed defects or failing test suites.
+
 ---
 
 ## 3. Terminal Execution & Safety Policy (`DEFAULT=DENY`)

@@ -127,5 +127,57 @@ class TestStateStore(unittest.TestCase):
         self.assertGreater(event_id, 0)
 
 
+class TestTaskQueue(unittest.TestCase):
+    def setUp(self):
+        self.temp_dir = tempfile.TemporaryDirectory()
+        self.queue_file = Path(self.temp_dir.name) / "task_queue.json"
+
+    def tearDown(self):
+        self.temp_dir.cleanup()
+
+    def test_parse_tasks_from_text(self):
+        from supervisor.task_queue import TaskQueue
+
+        sample_input = """
+        1. Setup database schema and migrations
+        2. Implement user authentication endpoints
+        3. Build analytics dashboard UI
+        """
+        tasks = TaskQueue.parse_tasks_from_text(sample_input)
+        self.assertEqual(len(tasks), 3)
+        self.assertEqual(tasks[0][0], "Setup database schema and migrations")
+        self.assertEqual(tasks[1][0], "Implement user authentication endpoints")
+        self.assertEqual(tasks[2][0], "Build analytics dashboard UI")
+
+    def test_queue_sequential_lifecycle(self):
+        from supervisor.task_queue import TaskQueue
+
+        queue = TaskQueue(self.queue_file)
+        raw_tasks = [
+            ("Task 1", "Description for task 1"),
+            ("Task 2", "Description for task 2"),
+        ]
+        batch = queue.initialize_batch("BATCH-001", raw_tasks)
+        self.assertEqual(len(batch.tasks), 2)
+        self.assertFalse(queue.is_all_completed())
+
+        # Process Task 1
+        t1 = queue.get_current_task()
+        self.assertEqual(t1.title, "Task 1")
+        queue.start_current_task("EXEC-SESSION-001")
+        self.assertEqual(t1.status, TaskStatus.IN_PROGRESS)
+        queue.complete_current_task(success=True)
+
+        # Process Task 2
+        t2 = queue.get_current_task()
+        self.assertEqual(t2.title, "Task 2")
+        queue.start_current_task("EXEC-SESSION-002")
+        queue.complete_current_task(success=True)
+
+        # All completed
+        self.assertTrue(queue.is_all_completed())
+        self.assertIsNone(queue.get_current_task())
+
+
 if __name__ == "__main__":
     unittest.main()
