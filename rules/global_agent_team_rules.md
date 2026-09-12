@@ -131,6 +131,16 @@ The system operates across three distinct architectural layers:
   - Allowed edits after QA pass: `README.md`, `docs/`, inline comments, docstrings, and unreferenced import pruning.
   - Any product code change automatically invalidates QA status (`QA_INVALIDATED`), forcing a complete re-test.
 
+### 2.10. User Proxy Agent (Autonomous Decision Surrogate / Auto Mode)
+- **Role**: Autonomous user surrogate and technical decision proxy when running in **Auto Mode** (`--auto` / `auto_mode = true`).
+- **Strict Authority**:
+  - Ingests requirements clarification questions, architectural options, and trade-offs formulated by the PM Agent.
+  - Evaluates options against the user's overarching objective, codebase conventions, and engineering best practices.
+  - Provides authoritative, definitive answers on behalf of the user, completely eliminating interactive confirmation pauses.
+- **Strict Constraints**:
+  - Read-only advisor; forbidden from directly modifying product source code or manifests.
+  - Must supply concrete, structured answers for every question without ambiguity.
+
 ---
 
 ## 3. Terminal Execution & Safety Policy (`DEFAULT=DENY`)
@@ -167,11 +177,14 @@ To optimize personal productivity and eliminate unnecessary ceremony for daily t
 
 ---
 
-## 5. Human-in-the-Loop (HITL) Checkpoints
+## 5. Human-in-the-Loop (HITL) Checkpoints & Auto Mode Bypass
 
-1. **Checkpoint 1 (Spec Approval)**: Mandatory stop after PM presents `TECHNICAL_SPEC.md` on STANDARD and COMPLEX tasks.
-2. **Checkpoint 2 (Sensitive Operations)**: Prompting confirmation before database schema alteration, package installations, or destructive git operations.
-3. **Checkpoint 3 (Escalation Breakout)**: Escalating to human guidance when the Debugger detects loop oscillation or reaches $K = 3$ iterations.
+1. **Checkpoint 0 (Requirements Discovery & Alignment)**:
+   - *Standard Mode*: PM presents clarifying questions to the human user via interactive modal (`ask_question`). Execution pauses until the user confirms.
+   - *Auto Mode (`--auto` / `auto_mode = true`)*: Checkpoint 0 is autonomously resolved by the **User Proxy Agent**, which evaluates technical trade-offs and supplies definitive answers without human interruption.
+2. **Checkpoint 1 (Spec Approval)**: Fulfilled autonomously by `critic-agent` sign-off (`SPEC_APPROVED`).
+3. **Checkpoint 2 (Sensitive Operations)**: Prompting confirmation before database schema alteration, package installations, or destructive git operations.
+4. **Checkpoint 3 (Escalation Breakout)**: Escalating to human guidance when the Debugger detects loop oscillation or reaches $K = 3$ iterations.
 
 ---
 

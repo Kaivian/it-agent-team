@@ -37,7 +37,8 @@
     "agents/security-agent.md",
     "agents/debugger-agent.md",
     "agents/doc-refactor-agent.md",
-    "agents/devops-infra-agent.md"
+    "agents/devops-infra-agent.md",
+    "agents/user-proxy-agent.md"
   ],
   "skills": [
     "skills/agent-team"

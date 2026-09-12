@@ -41,8 +41,13 @@ flowchart TD
     Supervisor --> EventBus["Event Bus & State Store<br/>SQLite WAL & Chronological Audit Log"]
     
     subgraph PlanningPhase ["Planning & Discovery"]
-        EventBus --> PM["Product Manager Agent<br/>Requirements Clarification & Technical Spec"]
-        PM --> Critic["Critic Agent<br/>6-Pillar Adversarial Spec Review"]
+        EventBus --> PM["Product Manager Agent<br/>Requirements Clarification"]
+        PM --> AutoCheck{"Auto Mode (--auto)?"}
+        AutoCheck -- "Yes (Auto Mode)" --> UserProxy["User Proxy Agent<br/>Autonomous Decision Surrogate"]
+        AutoCheck -- "No (Standard Mode)" --> HumanUser["Human User<br/>Interactive Modal Q&A"]
+        UserProxy --> Spec["Technical Specification<br/>Contract Enclave & Sizing"]
+        HumanUser --> Spec
+        Spec --> Critic["Critic Agent<br/>6-Pillar Adversarial Spec Review"]
         Critic -- "Plan Rejected" --> PM
         Critic -- "Plan Approved (SPEC_APPROVED)" --> Scheduler["DAG Scheduler & Concurrency Lock Manager"]
         Scheduler --> SubCoders["Parallel Sub-Coders<br/>sub-coder-01 .. sub-coder-NN"]
@@ -72,13 +77,14 @@ flowchart TD
 
 ## Complete Agent Roster
 
-The framework employs 10 specialized agent roles across the entire software delivery lifecycle:
+The framework employs 11 specialized agent roles across the entire software delivery lifecycle:
 
 | Agent Identifier | Role | Core Responsibilities | Recommended Model Tier |
 | :--- | :--- | :--- | :--- |
 | supervisor-agent | Out-of-Band Control Plane & Observability | State store management (SQLite/JSON), audit logging, file guard and concurrency locks, system telemetry, heartbeat monitoring. | Flagship Reasoning (Gemini 2.5 Pro / Claude 3.7 Sonnet) |
 | orchestrator-agent | In-Band Workflow & DAG Coordination | Execution DAG scheduling, agent dispatch, task lifecycle tracking, inter-agent message routing, phase transition management. | Flagship Reasoning (Gemini 2.5 Pro / Claude 3.7 Sonnet) |
 | pm-agent | Requirements Discovery & Spec Authoring | Problem framing, user intent clarification, technical specification authoring, sub-coder task sizing (N <= 5 files/agent). | High-Context Generalist (Gemini 2.5 Pro / Claude 3.7 Sonnet) |
+| user-proxy-agent | Autonomous User Surrogate & Decision Proxy | Operates in Auto Mode (--auto) to resolve requirements options and trade-offs on behalf of the user, eliminating interactive pauses. | High-Context Generalist / Reasoning (Gemini 2.5 Pro / Claude 3.7 Sonnet) |
 | critic-agent | Adversarial Plan Critique & Quality Gate | Pre-flight adversarial review, 6-pillar critique matrix (feasibility, edge cases, contracts, concurrency, security, testability), plan sign-off. | Deep Reasoning (Gemini 2.5 Pro Thinking / Claude 3.7 Sonnet Thinking) |
 | sub-coder | Parallel Surgical Code Generation | Disjoint file implementation against verbatim contract enclaves, localized unit testing, syntax validation, strict diff compliance. | High-Throughput Coding (Gemini 2.5 Flash / Claude 3.5 Sonnet) |
 | qa-agent | Quality Assurance & Functional Verification | Automated test suite execution, blackbox/whitebox test suites, regression analysis, measurable acceptance criteria validation. | High-Throughput Coding / Reasoning (Gemini 2.5 Pro / Flash) |
@@ -162,7 +168,7 @@ python scripts/doctor.py
 - SQLite3 Engine: Validates built-in SQLite3 engine availability.
 - Git CLI: Verifies git executable availability in system PATH.
 - Manifest Validation: Confirms JSON schema validity for `plugin.json`, `gemini-extension.json`, and `.claude-plugins/marketplace.json`.
-- Agent Roster Integrity: Confirms presence and non-empty status of all 10 agent specifications in `agents/`.
+- Agent Roster Integrity: Confirms presence and non-empty status of all 11 agent specifications in `agents/`.
 
 Output uses structured bracketed tags (`[PASS]`, `[WARN]`, `[FAIL]`) and returns exit code `0` on success or `1` on failure.
 
@@ -178,7 +184,12 @@ Activate the multi-agent workflow using the `/agent-team` skill command:
 
 ### Common Commands:
 
-Standard autonomous task execution:
+Auto Mode (100% Hands-Off - User Proxy Agent resolves all trade-offs without human confirmation):
+```bash
+/agent-team "Build secure multi-tenant authentication with RBAC and refresh tokens" --auto
+```
+
+Standard Mode (Human-in-the-Loop Clarification via interactive modals):
 ```bash
 /agent-team "Build secure multi-tenant authentication with RBAC and refresh tokens"
 ```

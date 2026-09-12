@@ -25,6 +25,7 @@ EXPECTED_AGENTS = [
     "debugger-agent.md",
     "doc-refactor-agent.md",
     "devops-infra-agent.md",
+    "user-proxy-agent.md",
 ]
 
 MANIFEST_FILES = [
