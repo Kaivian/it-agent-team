@@ -10,16 +10,20 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Kaivian/gemini-agent-team.git"
+    "url": "https://github.com/Kaivian/it-agent-team.git"
   },
-  "homepage": "https://github.com/Kaivian/gemini-agent-team#readme",
+  "homepage": "https://github.com/Kaivian/it-agent-team#readme",
   "keywords": [
+    "it-agent-team",
     "gemini",
     "antigravity",
     "multi-agent",
+    "cross-platform",
     "orchestration",
     "supervisor",
     "claude-code",
+    "cursor",
+    "copilot",
     "code-generation",
     "sub-coders"
   ],

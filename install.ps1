@@ -1,4 +1,4 @@
-# Windows PowerShell Installer for gemini-agent-team plugin
+# Windows PowerShell Installer for it-agent-team plugin
 # Strictly English only. No icons or emojis.
 
 [CmdletBinding()]
@@ -9,11 +9,11 @@ param(
 
 $ErrorActionPreference = "Stop"
 
-$RepoUrl = "https://github.com/Kaivian/gemini-agent-team.git"
+$RepoUrl = "https://github.com/Kaivian/it-agent-team.git"
 $ConfigFile = Join-Path $HOME ".gemini\config\config.json"
 
 Write-Host "=================================================="
-Write-Host "Gemini Agent Team Plugin: Windows Installer"
+Write-Host "IT Agent Team Plugin: Windows Installer"
 Write-Host "Target Directory: $TargetDir"
 Write-Host "=================================================="
 
@@ -163,7 +163,7 @@ if ($SkipDoctor) {
 # --------------------------------------------------
 Write-Host ""
 Write-Host "=================================================="
-Write-Host "Installation Complete: Gemini Agent Team Plugin"
+Write-Host "Installation Complete: IT Agent Team Plugin"
 Write-Host "=================================================="
 Write-Host "Plugin Path: $resolvedTarget"
 Write-Host "Config Path: $ConfigFile (plugins.agent-team.enabled = true)"

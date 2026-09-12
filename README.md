@@ -1,59 +1,74 @@
-# Gemini Agent Team
+# IT Agent Team
 
-Autonomous Multi-Agent Engineering Architecture for Antigravity, Gemini CLI, Claude Code, and CLI tools.
+Autonomous Multi-Agent IT Engineering Framework for Antigravity, Gemini CLI, Claude Code, Cursor, Windsurf, and GitHub Copilot.
+
+---
 
 ## Executive Summary
 
-Gemini Agent Team is an enterprise-grade autonomous multi-agent software engineering framework designed for Antigravity, Gemini CLI, Claude Code, and terminal-based development environments. It orchestrates a specialized roster of 10 autonomous agents through a deterministic, contract-driven lifecycle. The system decouples the out-of-band control plane (Supervisor, Event Bus, State Store, Concurrency Lock Manager) from the in-band execution engine (Orchestrator, Product Manager, Critic, Parallel Sub-Coders, QA Engineer, Security Auditor, Debugger, and Documentation). By enforcing mathematical sub-coder task sizing (N <= 5 files per coder) and non-overlapping file allowlists, Gemini Agent Team enables high-velocity parallel software construction with zero write collisions and automated double-audit quality gates.
+IT Agent Team is an enterprise-grade, multi-platform autonomous multi-agent software engineering framework. It orchestrates a specialized roster of 10 autonomous agents through a deterministic, contract-driven engineering lifecycle.
 
-## Architecture
+The framework decouples the Out-of-Band Control Plane (Supervisor, Event Bus, Durable State Store, Physical Concurrency Lock Manager) from the In-Band Execution Engine (Orchestrator, Product Manager, Critic, Parallel Sub-Coders, QA Functional Lead, Security Auditor, Debugger, and Documentation). By enforcing mathematical task sizing (N <= 5 files per sub-coder) and non-overlapping file allowlists, IT Agent Team delivers parallel execution with zero write collisions, comprehensive double-audit quality gates, and automated crash recovery.
 
-The architecture coordinates execution across three decoupled layers: the Out-of-Band Control Plane, the In-Band Execution Engine, and the Double-Audit Remediation and Release Loop.
+---
+
+## Universal Multi-Platform Compatibility
+
+IT Agent Team is engineered from the ground up for true cross-platform universality across operating systems and AI coding environments:
+
+### 1. Operating System Compatibility
+- Windows: Native PowerShell installer (install.ps1), Windows Terminal, and command line support.
+- macOS: POSIX Bash installer (install.sh), Apple Silicon and Intel support, Homebrew-friendly.
+- Linux & WSL: POSIX Bash installer (install.sh), support across Ubuntu, Debian, Fedora, Arch, Alpine, and WSL2 environments.
+- Zero External Dependencies: Core runtime and tooling use Python 3.10+ standard library (sqlite3, pathlib, json, dataclasses).
+
+### 2. AI Coding Agent & Editor Integration
+- Google Antigravity (AGY): Discovered natively via `~/.gemini/config/plugins/agent-team` or workspace `.agents/plugins/agent-team`.
+- Gemini CLI: Registered as a native extension with `gemini-extension.json` and slash command `/agent-team`.
+- Claude Code: Full marketplace catalog compatibility via `.claude-plugins/marketplace.json`.
+- Cursor IDE: Rule synchronization to `.cursorrules` and `.cursor/rules/it-agent-team.mdc`.
+- Windsurf IDE: Rule synchronization to `.windsurfrules`.
+- GitHub Copilot CLI & VS Code: Instruction synchronization to `.github/copilot-instructions.md`.
+- Universal Agents (Codex, Aider, Cline): Standardized `AGENTS.md` and `.agent/rules/AGENTS.md` format.
+
+---
+
+## Architectural Workflow
 
 ```mermaid
-flowchart TB
-    subgraph ControlPlane ["Out-of-Band Control Plane"]
-        Supervisor["Supervisor Agent<br/>State Store, Lock Manager, Audit Log"]
-        EventBus["Event Bus & Observability Stream"]
-        Supervisor <--> EventBus
-    end
-
-    subgraph ExecutionEngine ["In-Band Execution Engine"]
-        User(["Developer / CLI Invocation"]) --> Orchestrator["Orchestrator Agent"]
-        Orchestrator --> PM["Product Manager Agent<br/>Requirements & Technical Spec"]
-        PM --> Critic["Critic Agent<br/>Adversarial Plan Review"]
+flowchart TD
+    User["User Request / Goal"] --> Supervisor["Supervisor Agent<br/>Out-of-Band Control Plane & Watchdog"]
+    Supervisor --> EventBus["Event Bus & State Store<br/>SQLite WAL & Chronological Audit Log"]
+    
+    subgraph PlanningPhase ["Planning & Discovery"]
+        EventBus --> PM["Product Manager Agent<br/>Requirements Clarification & Technical Spec"]
+        PM --> Critic["Critic Agent<br/>6-Pillar Adversarial Spec Review"]
         Critic -- "Plan Rejected" --> PM
-        Critic -- "Plan Approved (SPEC_APPROVED)" --> Scheduler["DAG Scheduler & Lock Manager"]
+        Critic -- "Plan Approved (SPEC_APPROVED)" --> Scheduler["DAG Scheduler & Concurrency Lock Manager"]
         Scheduler --> SubCoders["Parallel Sub-Coders<br/>sub-coder-01 .. sub-coder-NN"]
     end
 
     subgraph AuditGates ["Double-Audit Quality Gates"]
-        SubCoders --> QA["QA Engineer Agent<br/>Functional Acceptance & Regression"]
-        SubCoders --> Security["Security Auditor Agent<br/>SAST & Credential Audit"]
+        SubCoders --> QA["QA Engineer Agent<br/>Automated Test Suites & Acceptance Checks"]
+        SubCoders --> Security["Security Auditor Agent<br/>SAST Injection & Credential Leak Audit"]
         QA --> GateCheck{"Quality Gates Pass?"}
         Security --> GateCheck
     end
 
     subgraph RemediationRelease ["Remediation & Release"]
-        GateCheck -- "Defects Identified" --> Debugger["Debugger Agent<br/>Root Cause Analysis & Patch Verification"]
+        GateCheck -- "Defects Identified" --> Debugger["Debugger Agent<br/>Root Cause Analysis & Verified Patching"]
         Debugger --> SubCoders
-        GateCheck -- "All Criteria Satisfied" --> Doc["Documentation Agent<br/>Docs & Knowledge Freeze"]
-        Doc --> DevOps["DevOps & Infra Agent<br/>Packaging & Git Release"]
+        GateCheck -- "All Criteria Satisfied" --> Doc["Documentation Agent<br/>API Docs, Comments & README"]
+        Doc --> DevOps["DevOps & Infra Agent<br/>Packaging, Diagnostics & Git Deployment"]
     end
 
-    EventBus -. "Telemetry & Monitoring" .-> Orchestrator
+    EventBus -. "Telemetry & Monitoring" .-> PM
     EventBus -. "Disjoint File Locks" .-> SubCoders
     EventBus -. "Audit Records" .-> QA
     EventBus -. "Security Telemetry" .-> Security
 ```
 
-### Core Architecture Invariants
-
-- Out-of-Band Control Plane: The Supervisor operates outside the conversational context window, maintaining state in SQLite and JSON logs to prevent context degradation.
-- Strict Concurrency Partitioning: Parallel sub-coders are assigned disjoint file allowlists; shared files are guarded by centralized locks.
-- Dynamic Sub-Coder Sizing: Work units are sized dynamically using N = ceil(TotalFiles / 3.5), strictly clamped to a maximum ceiling of 5 files per sub-coder.
-- Double-Audit Verification: Code must satisfy independent, automated audits from both QA (functional validation) and Security (SAST/secret leak scanning) before freeze.
-- Pragmatic Remediation Loop: Failures trigger the Debugger agent for surgical root-cause remediation without restarting the entire workflow.
+---
 
 ## Complete Agent Roster
 
@@ -72,75 +87,86 @@ The framework employs 10 specialized agent roles across the entire software deli
 | doc-refactor-agent | Technical Documentation & Knowledge Management | Technical documentation authoring, README maintenance, architectural diagrams, code comments hygiene, style and formatting compliance. | Balanced Generalist (Gemini 2.5 Flash / Pro) |
 | devops-infra-agent | Release Engineering & Environment Operations | Environment verification (doctor.py), packaging, CI/CD pipeline automation, Git repository lifecycle, release tag management. | Fast Automation / Tooling (Gemini 2.5 Flash) |
 
-## Installation
+---
 
-Choose one of the following installation methods based on your runtime environment.
+## Installation Methods
 
-### 1. Marketplace Installation (Claude Code & Antigravity)
+### Method 1: Marketplace Installation (Claude Code & Antigravity)
 
-Add the repository as a marketplace catalog and install the plugin:
+Add the repository as a marketplace catalog and install the plugin using standard commands:
 
 ```bash
-/plugin marketplace add Kaivian/gemini-agent-team
-/plugin install agent-team@gemini-agent-team
+/plugin marketplace add Kaivian/it-agent-team
+/plugin install agent-team@it-agent-team
 ```
 
-### 2. One-Line PowerShell Command (Windows)
+### Method 2: One-Line PowerShell Command (Windows)
 
-Run the automated installer in PowerShell:
+Run the automated installer in Windows PowerShell:
 
 ```powershell
-irm https://raw.githubusercontent.com/Kaivian/gemini-agent-team/main/install.ps1 | iex
+irm https://raw.githubusercontent.com/Kaivian/it-agent-team/main/install.ps1 | iex
 ```
 
-### 3. One-Line Bash Command (Linux / macOS)
+### Method 3: One-Line POSIX Bash Command (macOS, Linux, WSL)
 
-Run the automated installer in POSIX Bash:
+Run the automated installer in terminal:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/Kaivian/gemini-agent-team/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/Kaivian/it-agent-team/main/install.sh | bash
 ```
 
-### 4. Antigravity CLI Command
+### Method 4: Antigravity CLI Direct Installation
 
-Install the plugin directly from a local clone or directory path:
+Install from a local cloned directory or specific path:
 
 ```bash
 agy plugin install <directory>
 ```
 
-Example for local plugin directory:
+Example for global plugin location:
 
 ```bash
-agy plugin install C:\Users\Kaivian\.gemini\config\plugins\agent-team
+agy plugin install ~/.gemini/config/plugins/agent-team
 ```
 
-### 5. Git Clone Manual Setup
+### Method 5: Universal Rule Export to Any Project (Cursor, Windsurf, Copilot)
 
-Clone the repository directly into your plugin directory:
+To apply the IT Agent Team operational invariants to an existing codebase for Cursor, Windsurf, or GitHub Copilot:
 
 ```bash
-git clone https://github.com/Kaivian/gemini-agent-team.git C:\Users\Kaivian\.gemini\config\plugins\agent-team
-cd C:\Users\Kaivian\.gemini\config\plugins\agent-team
-python scripts/doctor.py
+python scripts/export_rules.py /path/to/your/project
 ```
 
-## Environment Diagnostics
+Options:
+- `--platform all`: Installs AGENTS.md, .cursorrules, .github/copilot-instructions.md, and .windsurfrules.
+- `--platform cursor`: Installs `.cursor/rules/it-agent-team.mdc` and `.cursorrules`.
+- `--platform copilot`: Installs `.github/copilot-instructions.md`.
+- `--platform windsurf`: Installs `.windsurfrules`.
+- `--platform universal`: Installs root `AGENTS.md` and `.agent/rules/AGENTS.md`.
 
-Gemini Agent Team provides a built-in diagnostic utility to verify system prerequisites, manifest integrity, and agent roster readiness:
+---
+
+## System Diagnostics
+
+Verify host environment readiness, platform detection, manifest integrity, and agent roster readiness:
 
 ```bash
 python scripts/doctor.py
 ```
 
 ### Verification Checks Performed:
+- OS Platform Detection: Identifies host operating system and CPU architecture.
+- Agent Environment Detection: Detects installed tools (Google Antigravity, Gemini CLI, Claude Code, Cursor, VS Code).
 - Python Environment: Verifies Python 3.10+ runtime.
-- SQLite3 Engine: Validates built-in SQLite3 availability for the Supervisor control plane.
+- SQLite3 Engine: Validates built-in SQLite3 engine availability.
 - Git CLI: Verifies git executable availability in system PATH.
 - Manifest Validation: Confirms JSON schema validity for `plugin.json`, `gemini-extension.json`, and `.claude-plugins/marketplace.json`.
-- Agent Roster Integrity: Confirms presence of all 10 agent specifications in `agents/`.
+- Agent Roster Integrity: Confirms presence and non-empty status of all 10 agent specifications in `agents/`.
 
-Diagnostic output uses structured bracketed tags (`[PASS]`, `[WARN]`, `[FAIL]`) and returns exit code `0` on success or `1` on failure.
+Output uses structured bracketed tags (`[PASS]`, `[WARN]`, `[FAIL]`) and returns exit code `0` on success or `1` on failure.
+
+---
 
 ## Usage Guide
 
@@ -154,7 +180,7 @@ Activate the multi-agent workflow using the `/agent-team` skill command:
 
 Standard autonomous task execution:
 ```bash
-/agent-team "Implement user authentication with JWT, refresh tokens, and rate limiting"
+/agent-team "Build secure multi-tenant authentication with RBAC and refresh tokens"
 ```
 
 Limit sub-coder concurrency:
@@ -164,18 +190,11 @@ Limit sub-coder concurrency:
 
 Dry-run mode (generates Technical Specification and DAG without file writes):
 ```bash
-/agent-team "Migrate REST endpoints to GraphQL schema" --dry-run
+/agent-team "Design event-driven microservice contracts" --dry-run
 ```
 
-### Execution Lifecycle Phases:
-1. Discovery & Local Ingestion: Maps existing codebase, conventions, and dependencies.
-2. Requirements Alignment: Clarifies scope, boundary conditions, and acceptance criteria.
-3. Technical Specification Authoring: Defines file allowlists and contract enclaves.
-4. Adversarial Plan Review: Evaluates the plan against the 6-pillar critique matrix.
-5. Dynamic Sub-Coder Sizing & Parallel Execution: Dispatches sub-coders across disjoint file sets.
-6. Double-Audit Gates: Executes automated test suites (QA) and SAST scans (Security).
-7. Post-QA Freeze & Documentation: Freezes codebase, updates documentation, and finalizes release.
+---
 
 ## License
 
-This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
+This project is licensed under the MIT License.

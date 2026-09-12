@@ -1,24 +1,28 @@
 {
-  "name": "gemini-agent-team",
+  "name": "it-agent-team",
   "owner": "Kaivian",
-  "description": "Autonomous multi-agent software engineering team marketplace catalog",
+  "description": "Universal multi-agent IT software engineering team marketplace catalog",
   "plugins": [
     {
       "name": "agent-team",
-      "description": "Multi-agent autonomous engineering team with supervisor control plane, quality gates, and parallel sub-coders",
+      "description": "Multi-agent autonomous IT engineering team with supervisor control plane, quality gates, and parallel sub-coders",
       "version": "1.0.0",
       "author": {
         "name": "Kaivian",
         "url": "https://github.com/Kaivian"
       },
-      "repository": "https://github.com/Kaivian/gemini-agent-team",
+      "repository": "https://github.com/Kaivian/it-agent-team",
       "license": "MIT",
-      "homepage": "https://github.com/Kaivian/gemini-agent-team#readme",
+      "homepage": "https://github.com/Kaivian/it-agent-team#readme",
       "keywords": [
+        "it-agent-team",
         "gemini",
         "antigravity",
         "multi-agent",
+        "cross-platform",
         "claude-code",
+        "cursor",
+        "copilot",
         "code-generation",
         "supervisor",
         "orchestration"

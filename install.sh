@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
-# POSIX Bash Installer for gemini-agent-team plugin
+# POSIX Bash Installer for it-agent-team plugin
 # Strictly English only. No icons or emojis.
 
 set -euo pipefail
 
-REPO_URL="https://github.com/Kaivian/gemini-agent-team.git"
+REPO_URL="https://github.com/Kaivian/it-agent-team.git"
 TARGET_DIR="${HOME}/.gemini/config/plugins/agent-team"
 CONFIG_FILE="${HOME}/.gemini/config/config.json"
 
 echo "=================================================="
-echo "Gemini Agent Team Plugin: Unix/macOS Installer"
+echo "IT Agent Team Plugin: Unix/macOS Installer"
 echo "Target Directory: ${TARGET_DIR}"
 echo "=================================================="
 
@@ -142,7 +142,7 @@ fi
 # --------------------------------------------------
 echo ""
 echo "=================================================="
-echo "Installation Complete: Gemini Agent Team Plugin"
+echo "Installation Complete: IT Agent Team Plugin"
 echo "=================================================="
 echo "Plugin Path: ${TARGET_DIR}"
 echo "Config Path: ${CONFIG_FILE} (plugins.agent-team.enabled = true)"

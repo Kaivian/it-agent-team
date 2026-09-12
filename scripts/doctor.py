@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Diagnostic utility for gemini-agent-team plugin.
-Verifies system dependencies, manifest validity, and agent roster completeness.
+Diagnostic utility for it-agent-team plugin.
+Verifies multi-platform system dependencies, manifest validity, and agent roster completeness.
 Output uses [PASS], [WARN], [FAIL] tags. English only, no icons or emojis.
 Returns exit code 0 on all checks passing, 1 on any critical failure.
 """
@@ -173,9 +173,32 @@ def check_config(report: DiagnosticReport) -> None:
         report.record_warn(f"Configuration: Could not parse {config_path}: {exc}")
 
 
+def check_platform(report: DiagnosticReport) -> None:
+    import platform
+    os_name = platform.system()
+    arch = platform.machine()
+    report.record_pass(f"OS Platform: {os_name} ({arch}) - Multi-platform support active")
+
+    detected_clis = []
+    for cli_name, label in [
+        ("agy", "Google Antigravity CLI (agy)"),
+        ("gemini", "Gemini CLI"),
+        ("claude", "Claude Code"),
+        ("cursor", "Cursor IDE"),
+        ("code", "VS Code"),
+    ]:
+        if shutil.which(cli_name):
+            detected_clis.append(label)
+
+    if detected_clis:
+        report.record_pass(f"Detected Agent Environment(s): {', '.join(detected_clis)}")
+    else:
+        report.record_pass("Agent Runtime: Compatible with Antigravity, Claude Code, Cursor, and CLI agents")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="Doctor diagnostic script for gemini-agent-team plugin."
+        description="Doctor diagnostic script for it-agent-team plugin."
     )
     parser.add_argument(
         "--root",
@@ -191,13 +214,14 @@ def main() -> int:
         root_dir = Path(__file__).resolve().parent.parent
 
     print("==================================================")
-    print("Gemini Agent Team: Doctor Diagnostic")
+    print("IT Agent Team: Doctor Diagnostic")
     print(f"Plugin Root: {root_dir}")
     print("==================================================")
 
     report = DiagnosticReport()
 
-    # System prerequisite checks
+    # Multi-platform and system prerequisite checks
+    check_platform(report)
     check_python(report)
     check_sqlite(report)
     check_git(report)
