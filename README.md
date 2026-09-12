@@ -178,53 +178,84 @@ python scripts/doctor.py
 - Git CLI: Verifies git executable availability in system PATH.
 - Manifest Validation: Confirms JSON schema validity for `plugin.json`, `gemini-extension.json`, and `.claude-plugins/marketplace.json`.
 - Agent Roster Integrity: Confirms presence and non-empty status of all 12 agent specifications in `agents/`.
+- Skills Roster Integrity: Confirms presence and non-empty status of all 5 command skills in `skills/`.
 
 Output uses structured bracketed tags (`[PASS]`, `[WARN]`, `[FAIL]`) and returns exit code `0` on success or `1` on failure.
 
 ---
 
-## Usage Guide
+## Slash Command Suite & Usage Guide
 
-Activate the multi-agent workflow using the `/agent-team` skill command:
+IT Agent Team provides a suite of 5 dedicated slash commands tailored for interactive pair-programming, hands-off autonomous execution, and sequential multi-task batch dispatch:
+
+### Command Overview
+
+| Command | Mode | Human Confirmation | Session Isolation | Primary Use Case |
+| :--- | :--- | :--- | :--- | :--- |
+| `/agent-team "<task>"` | Standard Interactive | Interactive Modal Q&A | Single Session | Complex tasks requiring explicit human requirements confirmation. |
+| `/agent-team-auto "<task>"` | Autonomous Auto Mode | Zero (User Proxy surrogate) | Single Session | Fast, unattended task delivery with automatic decision resolution. |
+| `/agent-team-multi-task "<list>"` | Multi-Task Sequential Queue | Interactive per task | Sequential FIFO Sessions | Batches of numbered/bulleted tasks executed in isolated lifecycles. |
+| `/agent-team-batch "<list>"` | Multi-Task Queue (Alias) | Interactive per task | Sequential FIFO Sessions | Convenient short alias for `/agent-team-multi-task`. |
+| `/agent-team-auto-batch "<list>"` | Autonomous Batch Queue | Zero (User Proxy surrogate) | Sequential FIFO Sessions | 100% hands-off sequential execution across all tasks in the queue. |
+
+---
+
+### Command Examples & Walkthroughs
+
+#### 1. Autonomous Auto Mode (`/agent-team-auto`)
+Runs the full engineering workflow without asking any clarifying questions. The `user-proxy-agent` analyzes the codebase, evaluates trade-offs, and approves the specification autonomously:
 
 ```bash
-/agent-team "<task-description>" [options]
+/agent-team-auto "Implement JWT authentication with refresh token rotation and argon2 password hashing"
 ```
 
-### Common Commands:
+#### 2. Sequential Multi-Task Queue (`/agent-team-multi-task` or `/agent-team-batch`)
+Ingests multiple development tasks and executes them sequentially. Each task runs through its own isolated full-lifecycle session (Phase 0 to Phase 6) before resetting `tasks.md` and launching the next task:
 
-Multi-Task Batch Mode (Sequential Execution - Isolated Clean Session per Task):
 ```bash
-/agent-team "1. Create user authentication module
-2. Add rate limiting middleware
-3. Write integration test suite" --batch
+/agent-team-multi-task "1. Create PostgreSQL schema and Alembic migrations
+2. Implement CRUD repository and service layer
+3. Add REST API endpoints with Pydantic validation
+4. Write comprehensive integration and regression tests"
 ```
 
-Multi-Task Batch with Auto Mode (100% Autonomous, Sequential Isolated Lifecycles):
+Or using the shorter alias:
+
 ```bash
-/agent-team "1. Setup Postgres schema
-2. Implement CRUD endpoints
-3. Generate OpenAPI spec" --batch --auto
+/agent-team-batch "1. Setup Redis caching layer
+2. Add cache-aside middleware to GET endpoints
+3. Add cache invalidation hooks on mutation routes"
 ```
 
-Auto Mode (Single Task - User Proxy Agent resolves all trade-offs without human confirmation):
+#### 3. Autonomous Multi-Task Batch (`/agent-team-auto-batch`)
+Combines the sequential session isolation of `task-dispatcher-agent` with the hands-off decision authority of `user-proxy-agent`. Drains the entire task queue without human interruption from Task 1 to Task N:
+
 ```bash
-/agent-team "Build secure multi-tenant authentication with RBAC and refresh tokens" --auto
+/agent-team-auto-batch "1. Refactor authentication routes to async FastAPI
+2. Add rate limiting with Redis sliding-window algorithm
+3. Implement Prometheus metrics middleware and /metrics endpoint
+4. Generate comprehensive OpenAPI 3.1 documentation"
 ```
 
-Standard Mode (Human-in-the-Loop Clarification via interactive modals):
+#### 4. Standard Interactive Mode (`/agent-team`)
+Presents 3-5 high-yield clarifying questions via an interactive UI modal to confirm requirements and architectural trade-offs with the human developer before writing code:
+
 ```bash
-/agent-team "Build secure multi-tenant authentication with RBAC and refresh tokens"
+/agent-team "Build multi-tenant billing service with Stripe integration"
 ```
 
-Limit sub-coder concurrency:
+#### 5. Additional CLI Options & Flags
+
+All commands support optional flags to customize runtime behavior:
+
+Limit parallel sub-coders:
 ```bash
-/agent-team "Refactor database access layer to async SQLAlchemy" --concurrency 2
+/agent-team-auto "Refactor legacy database access layer" --concurrency 2
 ```
 
-Dry-run mode (generates Technical Specification and DAG without file writes):
+Dry-Run Mode (generates specifications and execution DAG without writing code):
 ```bash
-/agent-team "Design event-driven microservice contracts" --dry-run
+/agent-team "Design event-driven messaging topology" --dry-run
 ```
 
 ---

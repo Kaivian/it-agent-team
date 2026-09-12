@@ -35,6 +35,14 @@ MANIFEST_FILES = [
     ".claude-plugins/marketplace.json",
 ]
 
+EXPECTED_SKILLS = [
+    "agent-team",
+    "agent-team-auto",
+    "agent-team-multi-task",
+    "agent-team-batch",
+    "agent-team-auto-batch",
+]
+
 
 class DiagnosticReport:
     def __init__(self):
@@ -155,6 +163,38 @@ def check_agent_roster(root_dir: Path, report: DiagnosticReport) -> None:
         )
 
 
+def check_skills_roster(root_dir: Path, report: DiagnosticReport) -> None:
+    skills_dir = root_dir / "skills"
+    if not skills_dir.exists() or not skills_dir.is_dir():
+        report.record_fail(f"Skills roster: Directory skills/ not found at {skills_dir}")
+        return
+
+    missing_skills = []
+    empty_skills = []
+
+    for skill_name in EXPECTED_SKILLS:
+        skill_file = skills_dir / skill_name / "SKILL.md"
+        if not skill_file.exists():
+            missing_skills.append(skill_name)
+        elif skill_file.stat().st_size == 0:
+            empty_skills.append(skill_name)
+
+    if missing_skills:
+        report.record_fail(
+            f"Skills roster: Missing {len(missing_skills)}/{len(EXPECTED_SKILLS)} skill(s): "
+            f"{', '.join(missing_skills)}"
+        )
+    else:
+        report.record_pass(
+            f"Skills roster: All {len(EXPECTED_SKILLS)} command skills exist in skills/"
+        )
+
+    if empty_skills:
+        report.record_warn(
+            f"Skills roster: {len(empty_skills)} skill file(s) are 0 bytes: {', '.join(empty_skills)}"
+        )
+
+
 def check_config(report: DiagnosticReport) -> None:
     config_path = Path.home() / ".gemini" / "config" / "config.json"
     if not config_path.exists():
@@ -231,6 +271,7 @@ def main() -> int:
     # Manifest and file structure checks
     check_manifests(root_dir, report)
     check_agent_roster(root_dir, report)
+    check_skills_roster(root_dir, report)
 
     # Configuration status check
     check_config(report)

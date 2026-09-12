@@ -118,6 +118,18 @@ config_path.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
 
 echo "  [PASS] Enabled agent-team plugin in ${CONFIG_FILE}"
 
+# Sync command skills to ~/.gemini/config/skills
+GLOBAL_SKILLS_DIR="${HOME}/.gemini/config/skills"
+PLUGIN_SKILLS_DIR="${TARGET_DIR}/skills"
+if [ ! -d "${PLUGIN_SKILLS_DIR}" ]; then
+    PLUGIN_SKILLS_DIR="${CURRENT_DIR}/skills"
+fi
+if [ -d "${PLUGIN_SKILLS_DIR}" ]; then
+    mkdir -p "${GLOBAL_SKILLS_DIR}"
+    cp -R "${PLUGIN_SKILLS_DIR}/"* "${GLOBAL_SKILLS_DIR}/"
+    echo "  [PASS] Synchronized 5 command skills to ${GLOBAL_SKILLS_DIR}"
+fi
+
 # --------------------------------------------------
 # Step 4: Run Doctor Diagnostics
 # --------------------------------------------------
@@ -147,13 +159,16 @@ echo "=================================================="
 echo "Plugin Path: ${TARGET_DIR}"
 echo "Config Path: ${CONFIG_FILE} (plugins.agent-team.enabled = true)"
 echo ""
-echo "Next Steps & Usage:"
-echo "1. Antigravity & Gemini CLI:"
-echo "   Run: /agent-team \"Your task description here\""
+echo "Available Slash Commands:"
+echo "  1. /agent-team \"<task>\"            Standard interactive mode (with Q&A modal)"
+echo "  2. /agent-team-auto \"<task>\"       Autonomous Auto Mode (zero human interruption)"
+echo "  3. /agent-team-multi-task \"<list>\" Sequential queue (fresh session per task)"
+echo "  4. /agent-team-batch \"<list>\"      Alias for /agent-team-multi-task"
+echo "  5. /agent-team-auto-batch \"<list>\" Fully autonomous multi-task batch queue"
 echo ""
-echo "2. Claude Code Marketplace Catalog:"
-echo "   Path: ${TARGET_DIR}/.claude-plugins/marketplace.json"
+echo "Marketplace Catalog:"
+echo "  Path: ${TARGET_DIR}/.claude-plugins/marketplace.json"
 echo ""
-echo "3. Diagnostics Utility:"
-echo "   Run: python3 ${TARGET_DIR}/scripts/doctor.py"
+echo "Diagnostics Utility:"
+echo "  Run: python3 ${TARGET_DIR}/scripts/doctor.py"
 echo "=================================================="

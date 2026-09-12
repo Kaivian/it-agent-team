@@ -34,3 +34,10 @@ When multiple tasks are provided (e.g. numbered list, milestone items, or `--bat
 3. Guides Task 1 through its complete 7-step lifecycle to verified QA/Security sign-off.
 4. Resets the active task board (`tasks.md`) cleanly and launches Task 2 in a fresh session.
 5. Emits a consolidated Multi-Session Batch Execution Report upon completing all queued tasks.
+
+## Dedicated Slash Commands
+In addition to `/agent-team`, dedicated shortcut commands are available:
+- `/agent-team-auto "<task>"`: Runs directly in 100% autonomous Auto Mode (no human confirmation).
+- `/agent-team-multi-task "<tasks>"`: Runs multiple tasks sequentially in isolated sessions.
+- `/agent-team-batch "<tasks>"`: Fast alias for `/agent-team-multi-task`.
+- `/agent-team-auto-batch "<tasks>"`: Fully autonomous sequential multi-task batch execution.

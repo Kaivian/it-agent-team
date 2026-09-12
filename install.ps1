@@ -134,6 +134,20 @@ if ($LASTEXITCODE -ne 0) {
 }
 Write-Host "  [PASS] Enabled agent-team plugin in $ConfigFile"
 
+# Sync command skills to ~/.gemini/config/skills
+$globalSkillsDir = Join-Path $HOME ".gemini\config\skills"
+$pluginSkillsDir = Join-Path $resolvedTarget "skills"
+if (-not (Test-Path $pluginSkillsDir)) {
+    $pluginSkillsDir = Join-Path $resolvedCurrent "skills"
+}
+if (Test-Path $pluginSkillsDir) {
+    if (-not (Test-Path $globalSkillsDir)) {
+        New-Item -ItemType Directory -Path $globalSkillsDir -Force | Out-Null
+    }
+    Copy-Item -Path (Join-Path $pluginSkillsDir "*") -Destination $globalSkillsDir -Recurse -Force
+    Write-Host "  [PASS] Synchronized 5 command skills to $globalSkillsDir"
+}
+
 # --------------------------------------------------
 # Step 4: Run Doctor Diagnostics
 # --------------------------------------------------
@@ -168,13 +182,16 @@ Write-Host "=================================================="
 Write-Host "Plugin Path: $resolvedTarget"
 Write-Host "Config Path: $ConfigFile (plugins.agent-team.enabled = true)"
 Write-Host ""
-Write-Host "Next Steps & Usage:"
-Write-Host "1. Antigravity & Gemini CLI:"
-Write-Host "   Run: /agent-team `"Your task description here`""
+Write-Host "Available Slash Commands:"
+Write-Host "  1. /agent-team `"<task>`"            Standard interactive mode (with Q&A modal)"
+Write-Host "  2. /agent-team-auto `"<task>`"       Autonomous Auto Mode (zero human interruption)"
+Write-Host "  3. /agent-team-multi-task `"<list>`" Sequential queue (fresh session per task)"
+Write-Host "  4. /agent-team-batch `"<list>`"      Alias for /agent-team-multi-task"
+Write-Host "  5. /agent-team-auto-batch `"<list>`" Fully autonomous multi-task batch queue"
 Write-Host ""
-Write-Host "2. Claude Code Marketplace Catalog:"
-Write-Host "   Path: $resolvedTarget\.claude-plugins\marketplace.json"
+Write-Host "Marketplace Catalog:"
+Write-Host "  Path: $resolvedTarget\.claude-plugins\marketplace.json"
 Write-Host ""
-Write-Host "3. Diagnostics Utility:"
-Write-Host "   Run: python $resolvedTarget\scripts\doctor.py"
+Write-Host "Diagnostics Utility:"
+Write-Host "  Run: python $resolvedTarget\scripts\doctor.py"
 Write-Host "=================================================="
