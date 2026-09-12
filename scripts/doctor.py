@@ -195,6 +195,14 @@ def check_skills_roster(root_dir: Path, report: DiagnosticReport) -> None:
         )
 
 
+def check_license(root_dir: Path, report: DiagnosticReport) -> None:
+    license_file = root_dir / "LICENSE"
+    if license_file.exists() and license_file.stat().st_size > 0:
+        report.record_pass("License: LICENSE file is present (MIT License)")
+    else:
+        report.record_warn("License: LICENSE file is missing or empty")
+
+
 def check_config(report: DiagnosticReport) -> None:
     config_path = Path.home() / ".gemini" / "config" / "config.json"
     if not config_path.exists():
@@ -272,6 +280,7 @@ def main() -> int:
     check_manifests(root_dir, report)
     check_agent_roster(root_dir, report)
     check_skills_roster(root_dir, report)
+    check_license(root_dir, report)
 
     # Configuration status check
     check_config(report)
