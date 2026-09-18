@@ -47,16 +47,16 @@ The system operates across three distinct architectural layers:
 - **Role**: Process and agent health monitor, heartbeat tracker, incident recorder, crash recovery coordinator, append-only audit logger, and final execution report publisher.
 - **Strict Authority**:
   - Initializes before worker agents; terminates last after final report publication.
-  - Maintains separate Agent State and Connection State.
-  - Reconstructs workflow state from SQLite following crashes or agent disconnections.
-- **NON-GOAL & Strict Invariant (INVARIANT-002)**:
+  - Step 0: Wipes and recreates a fresh, clean progress board [`.gemini/tasks.md`](file:///.gemini/tasks.md) in the agent directory for the new working session, and initializes/appends the session header in [`.gemini/LOG.md`](file:///.gemini/LOG.md).
+  - Step 6: Verifies 100% resolution of all items, logs final completion in `.gemini/LOG.md`, seals `.gemini/tasks.md`, and publishes the Final Execution Report to [`.gemini/FINAL_EXECUTION_REPORT.md`](file:///.gemini/FINAL_EXECUTION_REPORT.md).
+- **NON-GOAL & Strict Invariant (INVARIANT-002, INVARIANT-021)**:
   - Supervisor MUST NOT construct engineering DAGs, decompose technical tasks, decide implementation order, or dispatch coding tasks.
-  - The Supervisor observes and protects; worker execution is directed by the Orchestrator.
+  - All governance, task tracking, and audit log files MUST reside strictly within `.gemini/` and NEVER pollute the project root.
 
 ### 2.2. Principal Workflow Orchestrator (In-Band Workflow Conductor)
 - **Role**: The SOLE owner of workflow execution state (INVARIANT-001).
 - **Strict Authority**:
-  - Consumes PM specifications and canonical contract enclaves.
+  - Consumes PM specifications and canonical contract enclaves from `.gemini/TECHNICAL_SPEC.md`.
   - Constructs the topological DAG across the 4-tier hierarchy.
   - Allocates mutually exclusive file locks via the runtime `FileGuard`.
   - Routes QA defects to the Debugger with oscillation detection.
@@ -74,10 +74,11 @@ The system operates across three distinct architectural layers:
     - Easy/Trivial: $N = 1$ sub-coder (`sub-coder-01`).
     - Standard: $N = 2 \text{ to } 4$ sub-coders.
     - Large/Complex: Up to dozens of sub-coders ($N = 5 \text{ to } 20+$) strictly respecting 1-5 files per sub-coder.
-  - Produces mandatory **Sub-Coder Sizing & Allocation Table** in `TECHNICAL_SPEC.md` specifying files, tiers, dependencies, and lock ordering.
+  - Produces mandatory **Sub-Coder Sizing & Allocation Table** in [`.gemini/TECHNICAL_SPEC.md`](file:///.gemini/TECHNICAL_SPEC.md) specifying files, tiers, dependencies, and lock ordering.
 - **Strict Constraints**:
   - Forbidden from writing production code.
-  - Mandatory pause for User Confirmation (HITL Checkpoint 1) on non-trivial tasks.
+  - Mandatory spec verification via Critic Agent (or User Confirmation at HITL Checkpoint 1).
+  - All spec artifacts MUST be written to `.gemini/` (INVARIANT-021).
 
 ### 2.4. Sub-Coding Agents (Dynamic Concurrent Worker Pool & Lock-Wait Coordination)
 - **Role**: Implements production-grade source code across **multiple concurrent sub-coder instances** (`sub-coder-01`, `sub-coder-02`, ..., or domain-specialized instances like `sub-coder-backend`, `sub-coder-frontend`, `sub-coder-infra`).
@@ -102,14 +103,14 @@ The system operates across three distinct architectural layers:
 - **Strict Constraints**:
   - **ABSOLUTELY FORBIDDEN** from modifying product source code directly (INVARIANT-003).
   - Runs real test suites in the terminal (`pytest`, `npm test`, `vitest`, `cargo test`, `go test`).
-  - Audits solely against Acceptance Criteria and local `.agent/` architecture. Redundant SAST and secrets scanning are removed and delegated to the Security Agent.
+  - Audits solely against Acceptance Criteria in `.gemini/TECHNICAL_SPEC.md` and emits bug reports to [`.gemini/QA_BUG_REPORT.md`](file:///.gemini/QA_BUG_REPORT.md).
 
 ### 2.6. Security & Compliance Agent
 - **Role**: Authoritative gatekeeper for **SAST, Secrets Quarantine, and Supply-Chain SCA**.
 - **Strict Constraints**:
   - Read-only auditor; forbidden from modifying product code directly (INVARIANT-004).
   - Immediate gate block on any hardcoded secret or Critical/High vulnerability.
-  - Emits actionable remediation guidance in `SECURITY_AUDIT_REPORT.md`.
+  - Emits actionable remediation guidance in [`.gemini/SECURITY_AUDIT_REPORT.md`](file:///.gemini/SECURITY_AUDIT_REPORT.md).
 
 ### 2.7. Pragmatic Debugger & Optimizer Agent
 - **Role**: Surgical defect remediation with convergence detection.
@@ -145,13 +146,14 @@ The system operates across three distinct architectural layers:
 - **Role**: Batch task ingestion, FIFO queue coordination, and sequential multi-session lifecycle dispatcher.
 - **Strict Authority**:
   - Ingests multi-task batches or numbered goal lists from user requests.
-  - Converts multi-task requests into a persistent, structured task queue (`.agent_team/task_queue.json`).
+  - Converts multi-task requests into a persistent, structured task queue in [`.gemini/task_queue.json`](file:///.gemini/task_queue.json).
   - Spawns an isolated, dedicated execution session (`EXEC-YYYY-MM-DD-BATCH-XXX`) for Task N.
-  - Supervizes Task N through full lifecycle completion (Supervisor startup, PM spec, parallel coding, QA/Security double-audit, code freeze).
-  - Automatically resets the session board (`tasks.md`) and transitions to Task N+1 only after Task N passes 100% of quality gates.
+  - Supervises Task N through full lifecycle completion (Supervisor startup, PM spec, parallel coding, QA/Security double-audit, code freeze).
+  - Automatically resets the session board ([`.gemini/tasks.md`](file:///.gemini/tasks.md)) and transitions to Task N+1 only after Task N passes 100% of quality gates.
 - **Strict Constraints**:
   - Must execute tasks sequentially (one active session at a time) to prevent context pollution and file contention.
   - Never advance the queue while the current task has unaddressed defects or failing test suites.
+  - All batch queue files MUST reside in `.gemini/` (INVARIANT-021).
 
 ---
 
@@ -212,3 +214,14 @@ To optimize personal productivity and eliminate unnecessary ceremony for daily t
 - **INVARIANT-008**: Failed dependencies cannot silently become satisfied.
 - **INVARIANT-009**: Crashed agents cannot remain RUNNING indefinitely.
 - **INVARIANT-010**: All workflow states must be recoverable from durable SQLite storage.
+- **INVARIANT-011**: In `agent-team` workflow, spec approval is fulfilled autonomously by `critic-agent`. The agent MUST NOT halt for interactive planning approval or set `RequestFeedback: true`; it must dispatch sub-coders immediately upon `SPEC_APPROVED`.
+- **INVARIANT-012**: Sub-coder implementation tasks MUST be dispatched concurrently in parallel using a single batch `invoke_subagent` call containing all sub-agents in the `Subagents` array. Serializing independent sub-coders into sequential one-by-one tool calls is strictly prohibited.
+- **INVARIANT-013**: Sub-Coders MUST write code directly to disk via file tools and return ONLY a compact implementation manifest (< 15 lines). Dumping complete source code into chat messages is strictly prohibited to prevent context window flooding.
+- **INVARIANT-014**: QA and Security verification audits MUST be dispatched concurrently in parallel using a single batch `invoke_subagent` tool call containing both `qa-agent` and `security-agent`. Sequential serialization of verification is strictly prohibited.
+- **INVARIANT-015**: Subagents must adhere to Model Tiering to prevent cost and latency waste: `flash` MUST be used for utility, audit, status, and verification agents (`supervisor-agent`, `qa-agent`, `security-agent`, `devops-infra-agent`, `doc-refactor-agent`), while heavy models (`pro` or `inherit`) are reserved for reasoning and coding (`pm-agent`, `critic-agent`, `sub-coder`, `debugger-agent`).
+- **INVARIANT-016**: Sub-coder sizing MUST respect the Minimum Viable Chunk Principle: tasks touching $\le 3$ files or $< 200$ lines MUST be assigned to $N=1$ sub-coder to avoid micro-agent orchestration overhead (Amdahl's Law).
+- **INVARIANT-017**: For STANDARD/COMPLEX tasks with underspecified requirements, edge-case hazards, or race-condition risks, PM Agent MUST formulate 3–5 clarifying questions and pause for user confirmation (HITL Checkpoint 0) before authoring specifications. Once requirements are confirmed, architectural spec validation is fulfilled autonomously by `critic-agent` (HITL Checkpoint 1) without further human interruption.
+- **INVARIANT-018**: Session-Scoped Clean Task Board (`.gemini/tasks.md`) & Granular Heartbeat: `.gemini/tasks.md` serves strictly as the live status board for the **current active session**. At the start of each new working session, `.gemini/tasks.md` is wiped clean and created fresh to list only the current session's tasks. The board MUST be updated incrementally after EVERY SINGLE AGENT MILESTONE via 1-line surgical edits (agent started -> `[/] IN_PROGRESS`; agent finished -> `[x] COMPLETED`). Batching updates into a single delayed jump from 0% to 100% is strictly prohibited.
+- **INVARIANT-019**: Mandatory Interactive Modal Q&A (`ask_question`) & Zero Pre-Decomposition: When a task contains open design decisions, trade-offs, edge cases, or race conditions, the Primary Agent MUST immediately invoke the `ask_question` tool to present structured questions to the user and HALT (stop calling tools) to await response. The agent is STRICTLY FORBIDDEN from pre-populating downstream implementation tasks (`TASK-002`, `TASK-003`, etc.) in `.gemini/tasks.md`, locking files, or drafting specs before the user responds.
+- **INVARIANT-020**: Chronological Multi-Agent Timeline Log (`.gemini/LOG.md`): All inter-agent delegations (`who delegated work to whom`), agent actions (`what each agent is doing`), lifecycle events, and milestone results MUST be continuously appended to [`.gemini/LOG.md`](file:///.gemini/LOG.md) in the workspace agent directory in a structured timeline table format (`Timestamp | Source Agent | Target Agent | Action / Event | Details | Status`). Unlike `.gemini/tasks.md` which resets per session, `.gemini/LOG.md` is append-only across sessions, preserving the full historical audit trail.
+- **INVARIANT-021**: Agent Directory Isolation & Project Cleanliness (`.gemini/`): All agent-generated governance files, task trackers, logs, specifications, plan critiques, QA bug reports, security reports, and execution summaries MUST reside exclusively inside the `.gemini/` directory of the workspace root (e.g. `.gemini/tasks.md`, `.gemini/LOG.md`, `.gemini/TECHNICAL_SPEC.md`, `.gemini/CRITIQUE_REPORT.md`, `.gemini/QA_BUG_REPORT.md`, `.gemini/SECURITY_AUDIT_REPORT.md`, `.gemini/FINAL_EXECUTION_REPORT.md`, `.gemini/task_queue.json`). Agents are **STRICTLY FORBIDDEN** from polluting the project source root with internal markdown or governance files. The project root is reserved for product source code and official deliverables (e.g. `src/`, `package.json`, `README.md`, `docker-compose.yml`). Just as Claude uses `.claude/` and other AI tools have their own dedicated folders, Gemini Agent Team uses `.gemini/`. The Supervisor/Orchestrator must ensure `.gemini/` is ignored in `.gitignore`.

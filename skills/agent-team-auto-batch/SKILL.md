@@ -18,7 +18,7 @@ Execute multiple development tasks sequentially in 100% autonomous Auto Mode wit
   - `--dry-run`: Generate specifications for all tasks without modifying files.
 
 ## Workflow
-- Task 1: Autonomous spec -> Critic approval -> Sub-coders -> QA/Security audit -> Sign-off.
-- Task 2: Fresh session reset -> Autonomous spec -> Coding -> Testing -> Sign-off.
+- Task 1: Autonomous spec (`.gemini/TECHNICAL_SPEC.md`) -> Critic approval (`.gemini/CRITIQUE_REPORT.md`) -> Sub-coders -> QA/Security audit -> Sign-off.
+- Task 2: Fresh session reset (`.gemini/tasks.md`) -> Autonomous spec -> Coding -> Testing -> Sign-off.
 - ...
-- Queue Complete: Publishes final consolidated batch execution report.
+- Queue Complete: Publishes final consolidated batch execution report (`.gemini/FINAL_EXECUTION_REPORT.md`). All governance files reside strictly in `.gemini/` (INVARIANT-021).

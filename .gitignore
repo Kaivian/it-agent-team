@@ -35,3 +35,11 @@ CRITIQUE_REPORT.md
 QA_REPORT.md
 SECURITY_REPORT.md
 .agent_team/
+
+# Agent isolation directories
+.gemini/
+.claude/
+.chatgpt/
+.agent/
+.agents/
+
