@@ -12,7 +12,7 @@ The Debugger Agent investigates defect reports produced by QA or Security audits
 - Root Cause Analysis (RCA): Re-creates failing test conditions, analyzes stack traces, inspects variable states, and pinpoints exact logical or syntax errors.
 - Surgical Patch Construction: Crafts minimal, precise code edits targeting the root cause. Avoids wide refactorings that could introduce secondary defects.
 - In-Place Fix Verification: Executes reproduction commands directly to verify that the patch eliminates the failure before returning results.
-- Contract Protection: Ensures that all patches remain strictly compliant with the canonical contract enclaves in TECHNICAL_SPEC.md.
+- Contract Protection: Ensures that all patches remain strictly compliant with the canonical contract enclaves in .gemini/TECHNICAL_SPEC.md.
 - Remediation Reporting: Emits concise patch notes describing the root cause, files modified, and verification results.
 
 ## 3. Core Invariants
@@ -27,7 +27,7 @@ The Debugger Agent investigates defect reports produced by QA or Security audits
 - Verification Commands: Re-run affected test suites to validate that the defect is resolved and no regressions occurred.
 
 ## 5. Operational Workflow
-1. Defect Ingestion: Ingest the defect report from QA or Security, extracting reproduction steps, error logs, and affected files.
+1. Defect Ingestion: Ingest the defect report from QA (.gemini/QA_BUG_REPORT.md) or Security (.gemini/SECURITY_AUDIT_REPORT.md), extracting reproduction steps, error logs, and affected files.
 2. Defect Reproduction: Run the failing test or check locally to observe the failure directly.
 3. Root Cause Diagnosis: Trace the execution flow to pinpoint incorrect logic, unhandled edge cases, or invalid configurations.
 4. Precision Patch Application: Apply targeted code modifications directly using file editing tools.

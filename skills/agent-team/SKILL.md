@@ -21,19 +21,31 @@ Activate the multi-agent autonomous engineering team for end-to-end task executi
 ### Single Task Lifecycle
 1. Discovery & Local Ingestion: Map codebase architecture and repository conventions.
 2. Requirements Alignment: Clarify scope, edge cases, and architectural trade-offs (conducted with the human user in Standard Mode, or resolved autonomously by the `user-proxy-agent` in Auto Mode).
-3. Technical Specification: Produce contract enclaves and file allowlists.
-4. Critic Review: Adversarial inspection and sign-off.
+3. Technical Specification: Produce contract enclaves and file allowlists in `.gemini/TECHNICAL_SPEC.md`.
+4. Critic Review: Adversarial inspection and autonomous sign-off in `.gemini/CRITIQUE_REPORT.md`.
 5. Parallel Sub-Coding: Disjoint file execution with concurrency protection.
-6. Double-Audit: QA automated test execution and Security SAST validation.
-7. Post-QA Freeze: Codebase stabilization and documentation finalization.
+6. Double-Audit: QA automated test execution (`.gemini/QA_BUG_REPORT.md`) and Security SAST validation (`.gemini/SECURITY_AUDIT_REPORT.md`).
+7. Post-QA Freeze: Codebase stabilization and documentation finalization, updating `.gemini/FINAL_EXECUTION_REPORT.md`.
 
 ### Multi-Task Batch Dispatch (--batch)
 When multiple tasks are provided (e.g. numbered list, milestone items, or `--batch` flag), the `task-dispatcher-agent` manages queue execution:
-1. Ingests and registers tasks in persistent queue (`.agent_team/task_queue.json`).
+1. Ingests and registers tasks in persistent queue (`.gemini/task_queue.json`).
 2. Sequentially provisions an isolated session (`EXEC-...-BATCH-001`) for Task 1.
 3. Guides Task 1 through its complete 7-step lifecycle to verified QA/Security sign-off.
-4. Resets the active task board (`tasks.md`) cleanly and launches Task 2 in a fresh session.
-5. Emits a consolidated Multi-Session Batch Execution Report upon completing all queued tasks.
+4. Resets the active task board (`.gemini/tasks.md`) cleanly and launches Task 2 in a fresh session.
+5. Emits a consolidated Multi-Session Batch Execution Report upon completing all queued tasks to `.gemini/FINAL_EXECUTION_REPORT.md`.
+
+### Agent Directory Isolation (`.gemini/` / INVARIANT-021)
+All agent-created files (task tracking boards, chronological timeline logs, technical specifications, critique reports, bug reports, and final audit summaries) MUST be placed strictly inside `.gemini/` in the workspace root:
+- `.gemini/tasks.md`
+- `.gemini/LOG.md`
+- `.gemini/TECHNICAL_SPEC.md`
+- `.gemini/CRITIQUE_REPORT.md`
+- `.gemini/QA_BUG_REPORT.md`
+- `.gemini/SECURITY_AUDIT_REPORT.md`
+- `.gemini/FINAL_EXECUTION_REPORT.md`
+- `.gemini/task_queue.json`
+Agents are strictly forbidden from polluting the project source root with internal files. Ensure `.gemini/` is ignored in `.gitignore`.
 
 ## Dedicated Slash Commands
 In addition to `/agent-team`, dedicated shortcut commands are available:
