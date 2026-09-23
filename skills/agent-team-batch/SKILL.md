@@ -20,8 +20,8 @@ Execute multiple development tasks sequentially, each within its own isolated Ag
 
 ## Sequential Execution Lifecycle
 1. Batch Ingestion: `task-dispatcher-agent` parses the task list into `.gemini/task_queue.json`.
-2. Session N Initialization: Spawns fresh session (`EXEC-...-BATCH-00N`) with `supervisor-agent`, resetting `.gemini/tasks.md` and appending to `.gemini/LOG.md`.
-3. End-to-End Delivery: Runs Discovery -> Spec (`.gemini/TECHNICAL_SPEC.md`) -> Critic (`.gemini/CRITIQUE_REPORT.md`) -> Parallel Sub-Coders -> QA (`.gemini/QA_BUG_REPORT.md`) & Security Audit (`.gemini/SECURITY_AUDIT_REPORT.md`) -> Code Freeze.
-4. Clean Session Reset: Resets `.gemini/tasks.md` cleanly and marks Task N `COMPLETED`.
+2. Session N Initialization: Spawns fresh session (`EXEC-MODEL-...-BATCH-00N`, named by model session, not calendar date) with `supervisor-agent`, wiping and resetting both `.gemini/tasks.md` and `.gemini/LOG.md` completely fresh without legacy data.
+3. End-to-End Delivery: Runs Discovery -> Spec (`.gemini/TECHNICAL_SPEC.md` with front-end standards and DB migration priority) -> Critic (`.gemini/CRITIQUE_REPORT.md`) -> Parallel Sub-Coders -> QA (`.gemini/QA_BUG_REPORT.md` verifying tests & migrations) & Security Audit (`.gemini/SECURITY_AUDIT_REPORT.md`) -> Code Freeze.
+4. Clean Session Reset: Resets `.gemini/tasks.md` and `.gemini/LOG.md` cleanly and marks Task N `COMPLETED`.
 5. Automatic Progression: Advances to Task N+1 until queue is drained.
 6. Batch Summary: Emits consolidated batch completion report to `.gemini/FINAL_EXECUTION_REPORT.md`.

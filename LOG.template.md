@@ -1,6 +1,8 @@
 # Multi-Agent Execution Timeline Log
 
-## Session: [SESSION_ID] (Objective: [SESSION_OBJECTIVE])
+> Fresh Session Board: Wiped and initialized clean per model session (INVARIANT-020). Zero legacy data retention.
+
+## Session: SESSION-[MODEL_SESSION_ID] (Objective: [SESSION_OBJECTIVE])
 Started: [START_TIMESTAMP]
 
 | Timestamp | Source Agent | Target Agent | Action / Event | Details | Status |

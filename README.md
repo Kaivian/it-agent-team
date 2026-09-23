@@ -229,7 +229,7 @@ Combines the sequential session isolation of `task-dispatcher-agent` with the ha
 ```
 
 #### 4. Standard Interactive Mode (`/agent-team`)
-Presents 3-5 high-yield clarifying questions via an interactive UI modal to confirm requirements and architectural trade-offs with the human developer before writing code:
+Presents thorough clarifying questions (without numerical limit, concluding with an open feedback check) via an interactive UI modal to confirm requirements, front-end design fidelity, and database migration priorities with the human developer before writing code:
 
 ```bash
 /agent-team "Build multi-tenant billing service with Stripe integration"
