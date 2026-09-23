@@ -18,9 +18,9 @@ Execute software engineering tasks in 100% autonomous Auto Mode with zero human 
   - `--dry-run`: Produce technical specifications and DAG without writing code.
 
 ## Autonomous Workflow
-1. Discovery: Map codebase architecture and local conventions.
-2. Auto Requirements Resolution: `pm-agent` formulates trade-offs; `user-proxy-agent` resolves them definitively without human interruption.
-3. Spec Formulation & Approval: `pm-agent` creates `TECHNICAL_SPEC.md`; `critic-agent` audits and approves (`SPEC_APPROVED`).
-4. Parallel Sub-Coding: Disjoint file implementation across parallel sub-coders.
-5. Double-Audit Gates: `qa-agent` executes tests; `security-agent` performs SAST.
-6. Code Stabilization & Release: Code freeze, README updates, git commit.
+1. Discovery & Fresh Session Reset: Map codebase architecture; wipe and initialize `.gemini/tasks.md` and `.gemini/LOG.md` completely fresh for the active model session.
+2. Auto Requirements Resolution: `pm-agent` formulates thorough questions; `user-proxy-agent` resolves them definitively without human interruption.
+3. Spec Formulation & Approval: `pm-agent` creates `.gemini/TECHNICAL_SPEC.md` incorporating front-end quality standards (INVARIANT-022) and database migration priorities (INVARIANT-023); `critic-agent` audits and approves (`.gemini/CRITIQUE_REPORT.md`).
+4. Parallel Sub-Coding: Disjoint file implementation across parallel sub-coders upholding component immutability and canonical Tailwind classes.
+5. Double-Audit Gates: `qa-agent` executes tests and verifies database migrations (`.gemini/QA_BUG_REPORT.md`); `security-agent` performs SAST (`.gemini/SECURITY_AUDIT_REPORT.md`).
+6. Code Stabilization & Release: Code freeze, README updates, final report in `.gemini/FINAL_EXECUTION_REPORT.md`. All agent governance files reside strictly in `.gemini/` (INVARIANT-021).
