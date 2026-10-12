@@ -8,6 +8,16 @@ Use small workflow for localized changes, medium for multiple interfaces, and la
 
 The runtime returns dispatch envelopes, not live agents. Host delegation must actually be invoked. When unavailable, run serially and report that execution mode honestly.
 
+Implementation, repair and refactor roles use the [coding quality guide](../skills/agent-team/references/coding-quality.md) for readable responsibilities, meaningful names, explicit errors, clear data ownership and useful abstractions. Each coder self-reviews its owned diff; existing planning/review roles assess relevant criteria without adding mandatory workers or quality reports. Checks target behavior and meaningful regressions, and review findings distinguish concrete defects from optional preferences.
+
+## Frontend tasks
+
+Frontend agents inspect existing pages and component APIs, clarify unresolved requirements instead of guessing, and reuse components and design tokens. Questions remain available throughout the task. Local composition and existing variants are preferred; necessary shared changes require declared ownership, consumer impact review and regression checks. New styling uses Tailwind utilities for the installed version and theme, with `tailwindCSS.lint.suggestCanonicalClasses` diagnostics when available. Missing Tailwind setup is clarified before installation or migration; unavailable visual or editor-diagnostic checks are reported explicitly. See the [frontend workflow](../skills/agent-team/references/frontend-workflow.md), loaded only for relevant tasks.
+
+Keep frontend call-site `className` values limited to necessary local differences after using component defaults and variants. Repeated markup is consolidated into components, repeated visual options into variants, and shared style-only groups into named constants or helpers following project conventions. Tailwind class detection, override precedence and existing consumers must remain correct; there is no arbitrary class-count quota or automatic conversion to global CSS.
+
+Visual quality is assessed against the existing site or an agreed reference: clear hierarchy and primary action, consistent spacing and typography, relevant responsive and feedback states, keyboard access and focus. Available previews are inspected and observed issues refined before final verification. Component logic uses clear state ownership and derives values rather than synchronizing duplicate state. Design direction that the project and request do not settle is clarified with the user.
+
 ## Runtime entrypoint
 
 Resolve the plugin root from the actual `skills/<name>/SKILL.md` location. The scripts directory is two levels above the skill directory. Add `<plugin-root>/scripts` to `PYTHONPATH`, preserving existing entries, then use:
