@@ -1,17 +1,14 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "agent-team",
-  "version": "1.0.0",
-  "description": "Multi-agent autonomous engineering team with supervisor control plane, quality gates, and parallel sub-coders",
+  "version": "1.1.0",
+  "description": "Engineering workflow skills with local task state, verification gates, and host-assisted delegation.",
   "author": {
     "name": "Kaivian",
     "url": "https://github.com/Kaivian"
   },
   "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/Kaivian/it-agent-team.git"
-  },
+  "repository": "https://github.com/Kaivian/it-agent-team",
   "homepage": "https://github.com/Kaivian/it-agent-team#readme",
   "keywords": [
     "it-agent-team",
@@ -27,27 +24,14 @@
     "code-generation",
     "sub-coders"
   ],
-  "agents": [
-    "agents/supervisor-agent.md",
-    "agents/orchestrator-agent.md",
-    "agents/pm-agent.md",
-    "agents/critic-agent.md",
-    "agents/sub-coder.md",
-    "agents/qa-agent.md",
-    "agents/security-agent.md",
-    "agents/debugger-agent.md",
-    "agents/doc-refactor-agent.md",
-    "agents/devops-infra-agent.md",
-    "agents/user-proxy-agent.md",
-    "agents/task-dispatcher-agent.md"
-  ],
-  "skills": [
-    "skills/agent-team",
-    "skills/agent-team-auto",
-    "skills/agent-team-batch",
-    "skills/agent-team-auto-batch"
-  ],
-  "scripts": {
-    "doctor": "python scripts/doctor.py"
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "IT Agent Team",
+        "shortDescription": "Engineering workflows and verification gates",
+        "developerName": "Kaivian",
+        "category": "Productivity"
+      }
+    }
   }
 }

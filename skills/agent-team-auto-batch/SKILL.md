@@ -1,24 +1,14 @@
 ---
 name: agent-team-auto-batch
-description: Executes a batch of tasks sequentially in 100% autonomous Auto Mode with zero human interruptions across all sessions.
-argument-hint: ["[multi-task-list] [--concurrency <N>] [--dry-run]"]
+description: Process engineering tasks sequentially with routine decisions resolved automatically within existing user authorization.
 ---
 
-# /agent-team-auto-batch
+# agent-team-auto-batch
 
-Execute multiple development tasks sequentially in 100% autonomous Auto Mode without human intervention.
+Load the shared [Agent Team workflow](../agent-team/SKILL.md) and apply auto batch mode. Starting in the directory containing this skill's `SKILL.md`, go up two directories to resolve the plugin root; do not assume a home-directory installation.
 
-## Overview
-`/agent-team-auto-batch` combines the sequential session isolation of `task-dispatcher-agent` with the autonomous decision proxy of `user-proxy-agent`. It drains an entire task list from start to finish without pausing for interactive human confirmation at any stage.
+Resolve routine implementation choices from the user's request and repository. The user proxy is advisory; it cannot create authorization or promise zero interruptions when essential input is missing.
 
-## Usage
-- Run `/agent-team-auto-batch "1. Setup database models\n2. Create CRUD controllers\n3. Add end-to-end tests"`
-- Options:
-  - `--concurrency <N>`: Maximum parallel sub-coders per session (default: 4).
-  - `--dry-run`: Generate specifications for all tasks without modifying files.
+Read the [batch workflow](../agent-team/references/batch-workflow.md). Keep top-level tasks sequential and preserve all session histories. Do not reset or delete prior logs.
 
-## Workflow
-- Task 1: Fresh session reset (`.gemini/tasks.md` and `.gemini/LOG.md` wiped clean) -> Autonomous spec (`.gemini/TECHNICAL_SPEC.md` with front-end standards and DB migration priority) -> Critic approval (`.gemini/CRITIQUE_REPORT.md`) -> Sub-coders -> QA/Security audit -> Sign-off.
-- Task 2: Fresh session reset (`.gemini/tasks.md` and `.gemini/LOG.md` wiped clean) -> Autonomous spec -> Coding -> Testing -> Sign-off.
-- ...
-- Queue Complete: Publishes final consolidated batch execution report (`.gemini/FINAL_EXECUTION_REPORT.md`). All governance files reside strictly in `.gemini/` (INVARIANT-021).
+Use the same capability check, claim/check/submit evidence contract and serial fallback as the shared workflow. Default communication is English; explicit user language and project preferences take priority. A dry run inspects and proposes work without source or runtime mutation.

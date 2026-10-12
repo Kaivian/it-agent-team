@@ -2,6 +2,8 @@
 
 import json
 import re
+import os
+import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
@@ -13,12 +15,8 @@ class TaskQueue:
     def __init__(self, queue_file: Optional[Path] = None):
         if queue_file is None:
             self.queue_file = (
-                Path.home()
-                / ".gemini"
-                / "config"
-                / "plugins"
-                / "agent-team"
-                / ".agent_team"
+                Path.cwd()
+                / ".agent-team"
                 / "task_queue.json"
             )
         else:
@@ -51,8 +49,8 @@ class TaskQueue:
                     status=data.get("status", "IN_PROGRESS"),
                     created_at=data.get("created_at", datetime.now(timezone.utc).isoformat()),
                 )
-            except Exception:
-                self.batch = None
+            except (ValueError, KeyError, TypeError) as exc:
+                raise ValueError(f"Invalid task queue file: {self.queue_file}") from exc
 
     def save(self) -> None:
         if not self.batch:
@@ -75,7 +73,12 @@ class TaskQueue:
                 for t in self.batch.tasks
             ],
         }
-        self.queue_file.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
+        temporary = self.queue_file.with_name(self.queue_file.name + f".{uuid.uuid4().hex}.tmp")
+        try:
+            temporary.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
+            os.replace(temporary, self.queue_file)
+        finally:
+            temporary.unlink(missing_ok=True)
 
     @classmethod
     def parse_tasks_from_text(cls, text: str) -> list[tuple[str, str]]:
@@ -147,7 +150,7 @@ class TaskQueue:
             task.completed_at = datetime.now(timezone.utc).isoformat()
             self.batch.current_index += 1
             if self.batch.current_index >= len(self.batch.tasks):
-                self.batch.status = "COMPLETED"
+                self.batch.status = "COMPLETED" if all(t.status == TaskStatus.COMPLETED for t in self.batch.tasks) else "FAILED"
             self.save()
         return task
 

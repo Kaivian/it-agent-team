@@ -13,12 +13,9 @@ class StateStore:
     def __init__(self, db_path: Optional[Path] = None):
         if db_path is None:
             self.db_path = (
-                Path.home()
-                / ".gemini"
-                / "config"
-                / "plugins"
-                / "agent-team"
-                / ".agent_team"
+                Path.cwd()
+                / ".agent-team"
+                / "legacy"
                 / "state.db"
             )
         else:

@@ -1,196 +1,23 @@
-# Windows PowerShell Installer for it-agent-team plugin
-# Strictly English only. No icons or emojis.
-
+# Thin wrapper; shared implementation validates before changing host config.
 [CmdletBinding()]
 param(
-    [string]$TargetDir = "$HOME\.gemini\config\plugins\agent-team",
+    [ValidateSet('codex', 'gemini')][string]$HostName = 'codex',
+    [string]$TargetDir,
+    [string]$ConfigFile,
+    [string]$SkillsDir,
+    [string]$CodexHome,
+    [switch]$Update,
     [switch]$SkipDoctor
 )
-
-$ErrorActionPreference = "Stop"
-
-$RepoUrl = "https://github.com/Kaivian/it-agent-team.git"
-$ConfigFile = Join-Path $HOME ".gemini\config\config.json"
-
-Write-Host "=================================================="
-Write-Host "IT Agent Team Plugin: Windows Installer"
-Write-Host "Target Directory: $TargetDir"
-Write-Host "=================================================="
-
-# --------------------------------------------------
-# Step 1: Prerequisite Verification
-# --------------------------------------------------
-Write-Host "[1/4] Verifying system prerequisites..."
-
-# 1a. Check Git
-$gitCmd = Get-Command git -ErrorAction SilentlyContinue
-if (-not $gitCmd) {
-    Write-Error "[FAIL] Git CLI is not installed or not in system PATH. Please install Git from https://git-scm.com/ and rerun."
-    exit 1
+$ErrorActionPreference = 'Stop'
+$pythonCommand = Get-Command python -ErrorAction SilentlyContinue
+if (-not $pythonCommand) { $pythonCommand = Get-Command py -ErrorAction SilentlyContinue }
+if (-not $pythonCommand) { throw 'Python 3.10 or newer is required.' }
+$installArgs = @((Join-Path $PSScriptRoot 'scripts/install_plugin.py'), '--host', $HostName)
+foreach ($pair in @(@('--target-dir', $TargetDir), @('--config-file', $ConfigFile), @('--skills-dir', $SkillsDir), @('--codex-home', $CodexHome))) {
+    if ($pair[1]) { $installArgs += $pair }
 }
-$gitVer = (git --version).Trim()
-Write-Host "  [PASS] Git: $gitVer"
-
-# 1b. Check Python (>= 3.10)
-$pythonExe = $null
-if (Get-Command python -ErrorAction SilentlyContinue) {
-    $pythonExe = "python"
-} elseif (Get-Command py -ErrorAction SilentlyContinue) {
-    $pythonExe = "py"
-}
-
-if (-not $pythonExe) {
-    Write-Error "[FAIL] Python 3 is not installed or not in system PATH. Please install Python 3.10+ from https://www.python.org/ and rerun."
-    exit 1
-}
-
-$pyCheckCode = "import sys; print(f'{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}'); sys.exit(0 if sys.version_info >= (3, 10) else 1)"
-$pyVersionOutput = & $pythonExe -c $pyCheckCode
-if ($LASTEXITCODE -ne 0) {
-    Write-Error "[FAIL] Python version ($pyVersionOutput) is below the minimum required version 3.10. Please install Python 3.10 or higher."
-    exit 1
-}
-Write-Host "  [PASS] Python: $pyVersionOutput (>= 3.10)"
-
-# --------------------------------------------------
-# Step 2: Repository Deployment
-# --------------------------------------------------
-Write-Host "[2/4] Deploying repository..."
-$resolvedTarget = [System.IO.Path]::GetFullPath($TargetDir)
-$currentDir = (Get-Location).Path
-$resolvedCurrent = [System.IO.Path]::GetFullPath($currentDir)
-
-$isSameDirectory = ($resolvedCurrent.TrimEnd('\') -ieq $resolvedTarget.TrimEnd('\'))
-
-if (Test-Path (Join-Path $resolvedTarget ".git")) {
-    Write-Host "  Updating existing Git repository at $resolvedTarget..."
-    try {
-        git -C $resolvedTarget pull --ff-only
-        Write-Host "  [PASS] Repository updated successfully."
-    } catch {
-        Write-Warning "  [WARN] Git pull encountered an error. Retaining local files."
-    }
-} elseif ($isSameDirectory) {
-    Write-Host "  Installer running from within target directory ($resolvedTarget). Skipping clone."
-    Write-Host "  [PASS] Using local working tree."
-} elseif (Test-Path $resolvedTarget) {
-    Write-Host "  Directory already exists at $resolvedTarget without .git tracking."
-    Write-Host "  [PASS] Preserving existing directory files."
-} else {
-    Write-Host "  Cloning repository into $resolvedTarget..."
-    $parentDir = Split-Path -Parent $resolvedTarget
-    if (-not (Test-Path $parentDir)) {
-        New-Item -ItemType Directory -Path $parentDir -Force | Out-Null
-    }
-    git clone $RepoUrl $resolvedTarget
-    if ($LASTEXITCODE -ne 0) {
-        Write-Error "[FAIL] Failed to clone repository from $RepoUrl."
-        exit 1
-    }
-    Write-Host "  [PASS] Repository cloned successfully."
-}
-
-# --------------------------------------------------
-# Step 3: Configure ~/.gemini/config/config.json
-# --------------------------------------------------
-Write-Host "[3/4] Configuring Gemini plugin registry..."
-$configDir = Split-Path -Parent $ConfigFile
-if (-not (Test-Path $configDir)) {
-    New-Item -ItemType Directory -Path $configDir -Force | Out-Null
-}
-
-$updateConfigScript = @"
-import json
-from pathlib import Path
-
-config_path = Path(r'$ConfigFile')
-if config_path.exists():
-    try:
-        data = json.loads(config_path.read_text(encoding='utf-8'))
-    except Exception:
-        data = {}
-else:
-    data = {}
-
-if not isinstance(data, dict):
-    data = {}
-
-if 'plugins' not in data or not isinstance(data['plugins'], dict):
-    data['plugins'] = {}
-
-if 'agent-team' not in data['plugins'] or not isinstance(data['plugins']['agent-team'], dict):
-    data['plugins']['agent-team'] = {}
-
-data['plugins']['agent-team']['enabled'] = True
-
-config_path.parent.mkdir(parents=True, exist_ok=True)
-config_path.write_text(json.dumps(data, indent=2) + '\n', encoding='utf-8')
-"@
-
-& $pythonExe -c $updateConfigScript
-if ($LASTEXITCODE -ne 0) {
-    Write-Error "[FAIL] Failed to update plugin configuration in $ConfigFile."
-    exit 1
-}
-Write-Host "  [PASS] Enabled agent-team plugin in $ConfigFile"
-
-# Sync command skills to ~/.gemini/config/skills
-$globalSkillsDir = Join-Path $HOME ".gemini\config\skills"
-$pluginSkillsDir = Join-Path $resolvedTarget "skills"
-if (-not (Test-Path $pluginSkillsDir)) {
-    $pluginSkillsDir = Join-Path $resolvedCurrent "skills"
-}
-if (Test-Path $pluginSkillsDir) {
-    if (-not (Test-Path $globalSkillsDir)) {
-        New-Item -ItemType Directory -Path $globalSkillsDir -Force | Out-Null
-    }
-    Copy-Item -Path (Join-Path $pluginSkillsDir "*") -Destination $globalSkillsDir -Recurse -Force
-    Write-Host "  [PASS] Synchronized 4 command skills to $globalSkillsDir"
-}
-
-# --------------------------------------------------
-# Step 4: Run Doctor Diagnostics
-# --------------------------------------------------
-if ($SkipDoctor) {
-    Write-Host "[4/4] Skipping doctor diagnostics as requested."
-} else {
-    Write-Host "[4/4] Running system and plugin diagnostics..."
-    $doctorPath = Join-Path $resolvedTarget "scripts\doctor.py"
-    if (-not (Test-Path $doctorPath)) {
-        $doctorPath = Join-Path $resolvedCurrent "scripts\doctor.py"
-    }
-
-    if (Test-Path $doctorPath) {
-        & $pythonExe $doctorPath
-        if ($LASTEXITCODE -ne 0) {
-            Write-Warning "[WARN] Diagnostics completed with one or more non-blocking warnings."
-        } else {
-            Write-Host "  [PASS] Diagnostics completed successfully."
-        }
-    } else {
-        Write-Warning "[WARN] Diagnostic script not found at $doctorPath."
-    }
-}
-
-# --------------------------------------------------
-# Installation Summary and Next Steps
-# --------------------------------------------------
-Write-Host ""
-Write-Host "=================================================="
-Write-Host "Installation Complete: IT Agent Team Plugin"
-Write-Host "=================================================="
-Write-Host "Plugin Path: $resolvedTarget"
-Write-Host "Config Path: $ConfigFile (plugins.agent-team.enabled = true)"
-Write-Host ""
-Write-Host "Available Slash Commands:"
-Write-Host "  1. /agent-team `"<task>`"            Standard interactive mode (with Q&A modal)"
-Write-Host "  2. /agent-team-auto `"<task>`"       Autonomous Auto Mode (zero human interruption)"
-Write-Host "  3. /agent-team-batch `"<list>`"      Sequential queue (fresh session per task)"
-Write-Host "  4. /agent-team-auto-batch `"<list>`" Fully autonomous multi-task batch queue"
-Write-Host ""
-Write-Host "Marketplace Catalog:"
-Write-Host "  Path: $resolvedTarget\.claude-plugins\marketplace.json"
-Write-Host ""
-Write-Host "Diagnostics Utility:"
-Write-Host "  Run: python $resolvedTarget\scripts\doctor.py"
-Write-Host "=================================================="
+if ($Update) { $installArgs += '--update' }
+if ($SkipDoctor) { $installArgs += '--skip-doctor' }
+& $pythonCommand.Source @installArgs
+exit $LASTEXITCODE
