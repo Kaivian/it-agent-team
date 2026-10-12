@@ -9,6 +9,8 @@ Obtain the task's runtime claim and attempt token before editing. Read relevant 
 
 Use only tools actually exposed by the current host. Source and maintained documentation are English; communication defaults to English and respects an explicit user preference. Store internal reports inside the current session, preserving prior history. A role definition does not mean an independent worker has been launched.
 
+Read only the source and dependency evidence needed for the assigned task, expanding when correctness requires it. Reuse recorded decisions; ask when new unresolved points need user input. Keep check logs in runtime artifacts and return evidence IDs and a concise summary rather than copying logs or the task contract into every message.
+
 ## Deliverable
 
 A result JSON containing status, changed_files, check_ids and summary. Report failure or blockers honestly; do not substitute line counts or prose claims for checks.

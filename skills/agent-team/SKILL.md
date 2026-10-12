@@ -27,6 +27,16 @@ All plugin-maintained artifacts and default communication are English. Apply an 
 
 The runtime's locks are cooperative. Review diffs for ownership violations; do not represent locks as an OS sandbox. Its dispatch envelope describes work; spawning a real worker requires the host's actual API.
 
+## Context efficiency
+
+- Read shared workflow references and applicable role definitions once per active context. Reuse them across batch sessions; reload after context loss, package changes or new project instructions.
+- Search for relevant paths and symbols before reading files. Read focused sections first and expand when needed to understand behavior; avoid dumping the repository or entire logs.
+- Keep a short session note with scope, decisions and answers, unresolved questions, ownership, evidence IDs and next action. Link to full artifacts instead of copying their contents. Preserve durable history; summaries are navigation aids, not substitutes for verification.
+- When delegating, pass the task contract, relevant decisions, source paths, dependency results and runtime identity/token. Prefer scoped context over complete chat history when the host supports it, retaining applicable instructions and authorization. Workers return the result schema, evidence references and blockers, not transcripts.
+- Prefer `--compact` runtime JSON and `status --summary` for routine monitoring. Inspect full status, receipts or logs when diagnosing failures, expiry or recovery. Wait on host lifecycle events when available; avoid repeated unchanged status polling.
+- Run relevant checks after changes; repeat only when affected inputs change or unresolved failures require it. Do not duplicate checks, role reviews or narrative reports that add no evidence.
+- Keep progress updates to new findings, decisions and blockers. Efficiency never imposes a question limit, suppresses newly needed clarification or removes required evidence and integration gates.
+
 ## Modes
 
 - Standard: clarify only material ambiguity and continue authorized work.

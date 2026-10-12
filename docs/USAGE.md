@@ -25,6 +25,12 @@ python -m supervisor --workspace <project> init --help
 
 Run every command with the same workspace and session ID. Claim commands return an attempt token; heartbeat, check and submit commands use that token to reject stale workers after recovery.
 
+## Token-efficient operation
+
+The workflow reuses loaded instructions, reads focused source sections and carries concise session notes across batch tasks. Worker context includes the assigned contract and relevant decisions, with paths to full artifacts. Questions can still be asked throughout each task with no fixed limit; evidence and integration requirements remain in force.
+
+Use global `--compact` before any subcommand to remove JSON indentation. For routine monitoring, `--compact status --summary` additionally omits repeated task contracts and results while retaining scheduling, expiry and verification-error signals. Regular `status` provides full details for diagnosis, and persisted reports retain complete evidence. Neither option changes runtime verification or exit codes.
+
 ## Configuration
 
 | Setting | Default | Runtime bounds |
@@ -82,4 +88,10 @@ To retain a legacy location, select it explicitly through the global `--state-di
 
 Batch skills run top-level tasks sequentially with separate session IDs and a combined outcome report. Failed tasks are not silently skipped or counted as complete.
 
+Clarification happens separately at each task's turn. The host asks only the current task's essential questions, waits for the answers, then starts that session. After it finishes, the host asks the next task's questions using any relevant earlier results. Questions for every task are never collected in one upfront prompt. Existing answers are reused, including on resume; tasks with enough information proceed directly. Auto batch follows the same timing for essential human input while resolving routine choices automatically. See the [batch workflow](../skills/agent-team/references/batch-workflow.md).
+
 Auto skills choose routine implementation details within the user's request. A user-proxy role cannot provide new permission, impersonate the user, or guarantee that essential human input will never be needed.
+
+Standard batch does not cap the number of questions or clarification rounds for a task. Unresolved requirements, preferences and constraints can all be clarified, with follow-up rounds until clear. A host tool's per-call question limit only affects how questions are split across calls. Auto batch still resolves routine choices automatically, with no fixed round limit for essential human input.
+
+Questions may be asked at any point during the current session, including implementation, verification and review. When new points need user input, the host asks immediately and waits for required answers before continuing affected work. Independent authorized work may continue while waiting. Answers and resulting changes to the task's scope or checks are recorded in that session; clarification is not limited to the opening questions.
