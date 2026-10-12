@@ -49,12 +49,13 @@ class CLIOutputTests(unittest.TestCase):
         self.assertEqual(persisted["tasks"], before["tasks"])
 
     def test_compact_claim_retains_full_dispatch_contract_and_token(self):
+        expected_paths = self.manager.status()["tasks"][0]["file_allowlist"]
         code, output = self.run_cli("--compact", "claim", "--worker", "coder")
         claim = json.loads(output)
         self.assertEqual(code, 0)
         self.assertTrue(claim["token"])
         self.assertEqual(claim["task"]["acceptance_criteria"], ["Verified behavior"])
-        self.assertEqual(claim["task"]["file_allowlist"], ["a.txt"])
+        self.assertEqual(claim["task"]["file_allowlist"], expected_paths)
 
     def test_summary_retains_expiry_dependencies_and_verification_errors(self):
         status = self.manager.status()
