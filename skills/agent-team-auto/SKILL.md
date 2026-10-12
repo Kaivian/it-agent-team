@@ -1,26 +1,12 @@
 ---
 name: agent-team-auto
-description: Executes the IT Agent Team engineering workflow in 100% autonomous Auto Mode, delegating all requirements decisions to user-proxy-agent without asking the human user.
-argument-hint: ["[task-description] [--concurrency <N>] [--dry-run]"]
+description: Execute one engineering task with routine choices resolved from user scope and repository conventions, using durable state and recorded checks.
 ---
 
-# /agent-team-auto
+# agent-team-auto
 
-Execute software engineering tasks in 100% autonomous Auto Mode with zero human interruptions.
+Load the shared [Agent Team workflow](../agent-team/SKILL.md) and apply auto mode. Starting in the directory containing this skill's `SKILL.md`, go up two directories to resolve the plugin root; do not assume a home-directory installation.
 
-## Overview
-`/agent-team-auto` triggers the IT Agent Team multi-agent workflow with `--auto` enabled by default. The `user-proxy-agent` acts as the human decision surrogate during Phase 0 & 1, evaluating technical trade-offs, answering requirements clarification questions, and approving specifications autonomously.
+Resolve routine implementation choices from the user's request and repository. The user proxy is advisory; it cannot create authorization or promise zero interruptions when essential input is missing.
 
-## Usage
-- Run `/agent-team-auto "Build secure multi-tenant authentication with RBAC and refresh tokens"`
-- Options:
-  - `--concurrency <N>`: Maximum parallel sub-coders (default: 4).
-  - `--dry-run`: Produce technical specifications and DAG without writing code.
-
-## Autonomous Workflow
-1. Discovery & Fresh Session Reset: Map codebase architecture; wipe and initialize `.gemini/tasks.md` and `.gemini/LOG.md` completely fresh for the active model session.
-2. Auto Requirements Resolution: `pm-agent` formulates thorough questions; `user-proxy-agent` resolves them definitively without human interruption.
-3. Spec Formulation & Approval: `pm-agent` creates `.gemini/TECHNICAL_SPEC.md` incorporating front-end quality standards (INVARIANT-022) and database migration priorities (INVARIANT-023); `critic-agent` audits and approves (`.gemini/CRITIQUE_REPORT.md`).
-4. Parallel Sub-Coding: Disjoint file implementation across parallel sub-coders upholding component immutability and canonical Tailwind classes.
-5. Double-Audit Gates: `qa-agent` executes tests and verifies database migrations (`.gemini/QA_BUG_REPORT.md`); `security-agent` performs SAST (`.gemini/SECURITY_AUDIT_REPORT.md`).
-6. Code Stabilization & Release: Code freeze, README updates, final report in `.gemini/FINAL_EXECUTION_REPORT.md`. All agent governance files reside strictly in `.gemini/` (INVARIANT-021).
+Use the same capability check, claim/check/submit evidence contract and serial fallback as the shared workflow. Default communication is English; explicit user language and project preferences take priority. A dry run inspects and proposes work without source or runtime mutation.

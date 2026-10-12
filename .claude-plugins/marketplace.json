@@ -1,12 +1,12 @@
 {
   "name": "it-agent-team",
   "owner": "Kaivian",
-  "description": "Universal multi-agent IT software engineering team marketplace catalog",
+  "description": "IT Agent Team workflow skills marketplace",
   "plugins": [
     {
       "name": "agent-team",
-      "description": "Multi-agent autonomous IT engineering team with supervisor control plane, quality gates, and parallel sub-coders",
-      "version": "1.0.0",
+      "description": "Engineering workflow skills with local task state, verification gates, and host-assisted delegation.",
+      "version": "1.1.0",
       "author": {
         "name": "Kaivian",
         "url": "https://github.com/Kaivian"

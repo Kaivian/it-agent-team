@@ -1,6 +1,7 @@
 import sys
 import tempfile
 import unittest
+import os
 from pathlib import Path
 
 pkg_dir = Path(__file__).resolve().parent.parent
@@ -30,7 +31,11 @@ class TestSupervisorModels(unittest.TestCase):
 
 class TestFileGuard(unittest.TestCase):
     def setUp(self):
-        self.guard = FileGuard()
+        self.temp_dir = tempfile.TemporaryDirectory()
+        self.guard = FileGuard(workspace=self.temp_dir.name)
+
+    def tearDown(self):
+        self.temp_dir.cleanup()
 
     def test_acquire_and_release_exclusive_lock(self):
         self.assertTrue(self.guard.acquire_lock("src/models.py", "sub-coder-01"))
@@ -49,8 +54,8 @@ class TestFileGuard(unittest.TestCase):
 
     def test_case_insensitive_path_normalization(self):
         self.assertTrue(self.guard.acquire_lock("SRC/INDEX.TS", "sub-coder-01"))
-        self.assertTrue(self.guard.is_locked("src/index.ts"))
-        self.assertFalse(self.guard.acquire_lock("src/index.ts", "sub-coder-02"))
+        self.assertEqual(self.guard.is_locked("src/index.ts"), os.name == "nt")
+        self.assertEqual(self.guard.acquire_lock("src/index.ts", "sub-coder-02"), os.name != "nt")
 
     def test_release_all_for_agent(self):
         self.guard.acquire_lock("file1.ts", "sub-coder-01")

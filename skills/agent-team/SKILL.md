@@ -1,54 +1,35 @@
 ---
 name: agent-team
-description: Coordinates the elite multi-agent team workflow for complex or heavy software development tasks with central Supervisor control plane, dynamic sub-coding agents, QA review and testing, and debugger feedback loop.
-argument-hint: ["[task-description] [--auto] [--batch] [--concurrency <N>] [--dry-run]"]
+description: Coordinate substantial software engineering tasks with scoped workers, durable session state, and recorded verification in supported coding hosts.
 ---
 
-# /agent-team
+# Agent Team
 
-Activate the multi-agent autonomous engineering team for end-to-end task execution.
+Use this workflow for tasks that benefit from decomposition or durable verification. Keep small changes small.
 
-## Usage
-- Run `/agent-team "Build user authentication module"` to start a managed multi-agent session.
-- Options:
-  - `--auto`: Auto Mode. Bypasses all human confirmation prompts; delegates requirements clarification and trade-off decisions to the `user-proxy-agent` for 100% hands-off autonomous execution.
-  - `--batch`: Batch Mode. When multiple tasks are submitted, triggers `task-dispatcher-agent` to execute each task within its own dedicated, sequential lifecycle session (Session 1 -> Session 2 -> ...).
-  - `--concurrency <N>`: Maximum parallel sub-coders (default: 4).
-  - `--dry-run`: Produce technical specifications and DAG without file modifications.
+## Bootstrap
 
-## Execution Flow
+1. Starting in the directory containing this skill's `SKILL.md`, go up two directories to resolve the plugin root (`skills/agent-team/../..`). Use its `scripts/` and `agents/`; never assume a user's home directory or a hardcoded installation location.
+2. Read the target project's instructions and inspect the relevant code. Identify actual host capabilities: delegation, file editing, command execution and worker lifecycle inspection. Read only role definitions needed for this task.
+3. Read [runtime workflow](references/runtime-workflow.md) for the concrete session/claim/check/submit contract. Use the actual runtime CLI help if options differ.
+4. Select small, medium or large workflow from scope and risk. Respect configured concurrency, timeout and retry budgets. Missing delegation means serial execution by the host agent; never fabricate workers or audit sign-offs.
+5. Create a new session or resume its existing ID. Preserve old sessions. Use `.agent-team/sessions/<id>/` by default; consult [usage](../../docs/USAGE.md) for legacy state compatibility.
 
-### Single Task Lifecycle
-1. Discovery & Local Ingestion: Map codebase architecture and repository conventions.
-2. Requirements Alignment: Clarify scope, edge cases, and architectural trade-offs using thorough clarifying questions without artificial numerical limits, concluding with an open feedback question (conducted with the human user in Standard Mode, or resolved autonomously by the `user-proxy-agent` in Auto Mode).
-3. Technical Specification: Produce contract enclaves, front-end quality mandates (INVARIANT-022), and database migration priority (INVARIANT-023) in `.gemini/TECHNICAL_SPEC.md`.
-4. Critic Review: Adversarial inspection and autonomous sign-off in `.gemini/CRITIQUE_REPORT.md`.
-5. Parallel Sub-Coding: Disjoint file execution with concurrency protection, component immutability, clean classes, and canonical Tailwind scale classes.
-6. Double-Audit: QA automated test execution including database migration verification (`.gemini/QA_BUG_REPORT.md`) and Security SAST validation (`.gemini/SECURITY_AUDIT_REPORT.md`).
-7. Post-QA Freeze: Codebase stabilization and documentation finalization, updating `.gemini/FINAL_EXECUTION_REPORT.md`.
+## Execution
 
-### Multi-Task Batch Dispatch (--batch)
-When multiple tasks are provided (e.g. numbered list, milestone items, or `--batch` flag), the `task-dispatcher-agent` manages queue execution:
-1. Ingests and registers tasks in persistent queue (`.gemini/task_queue.json`).
-2. Sequentially provisions an isolated session (`EXEC-MODEL-...-BATCH-001`) for Task 1, named by model session (not calendar date).
-3. Guides Task 1 through its complete 7-step lifecycle to verified QA/Security sign-off.
-4. Resets both the active task board (`.gemini/tasks.md`) AND timeline log (`.gemini/LOG.md`) completely fresh (no legacy data retention) and launches Task 2 in a fresh session.
-5. Emits a consolidated Multi-Session Batch Execution Report upon completing all queued tasks to `.gemini/FINAL_EXECUTION_REPORT.md`.
+Describe measurable acceptance criteria, exact file ownership and dependencies. Claim ready tasks before edits; use actual host delegation when available. Pass workers the task contract, selected role definition, runtime access and result schema. Assign shared files to one owner or a later integration task.
 
-### Agent Directory Isolation (`.gemini/` / INVARIANT-021)
-All agent-created files (task tracking boards, chronological timeline logs, technical specifications, critique reports, bug reports, and final audit summaries) MUST be placed strictly inside `.gemini/` in the workspace root:
-- `.gemini/tasks.md`
-- `.gemini/LOG.md`
-- `.gemini/TECHNICAL_SPEC.md`
-- `.gemini/CRITIQUE_REPORT.md`
-- `.gemini/QA_BUG_REPORT.md`
-- `.gemini/SECURITY_AUDIT_REPORT.md`
-- `.gemini/FINAL_EXECUTION_REPORT.md`
-- `.gemini/task_queue.json`
-Agents are strictly forbidden from polluting the project source root with internal files. Ensure `.gemini/` is ignored in `.gitignore`.
+Ask only for essential missing information. Existing user instructions authorize routine implementation choices within their scope. Auto mode changes how routine choices are resolved; it does not create additional permission.
 
-## Dedicated Slash Commands
-In addition to `/agent-team`, dedicated shortcut commands are available:
-- `/agent-team-auto "<task>"`: Runs directly in 100% autonomous Auto Mode (no human confirmation).
-- `/agent-team-batch "<tasks>"`: Runs multiple tasks sequentially in isolated full-lifecycle sessions.
-- `/agent-team-auto-batch "<tasks>"`: Fully autonomous sequential multi-task batch execution.
+Record relevant verification through the runtime, submit evidence identifiers and review the resulting state. Resolve failures within the retry budget; report unresolved blockers honestly. For medium or large workflows, register a final read-only integration task depending on every implementation task and record its relevant check before final reporting; individual worker receipts alone are insufficient. See the runtime reference for `verification_files`, shared input locks and evidence freshness.
+
+All plugin-maintained artifacts and default communication are English. Apply an explicit user's language preference when using this plugin in their project. UI conventions, component reuse, test depth and task size follow project requirements rather than universal style mandates.
+
+The runtime's locks are cooperative. Review diffs for ownership violations; do not represent locks as an OS sandbox. Its dispatch envelope describes work; spawning a real worker requires the host's actual API.
+
+## Modes
+
+- Standard: clarify only material ambiguity and continue authorized work.
+- Auto: resolve routine product choices from the request and repository. Read `agents/user-proxy-agent.md` only when such a choice needs analysis.
+- Batch: process top-level tasks sequentially with separate preserved sessions. Read [batch workflow](references/batch-workflow.md) when processing a list.
+- Dry run: inspect and propose contracts without running mutation commands or creating a session. Do not label planned checks as performed.

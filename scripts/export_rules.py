@@ -13,13 +13,33 @@ import sys
 from pathlib import Path
 
 
-def export_rules(source_rules: Path, target_repo: Path, platforms: list[str]) -> int:
+def export_rules(source_rules: Path, target_repo: Path, platforms: list[str], replace: bool = False) -> int:
     if not source_rules.exists():
         print(f"[FAIL] Source rules not found at: {source_rules}")
         return 1
 
     rule_content = source_rules.read_text(encoding="utf-8")
     target_repo = target_repo.resolve()
+    # Preflight every destination before creating directories or writing anything.
+    destinations = []
+    if "universal" in platforms or "all" in platforms:
+        destinations.extend(["AGENTS.md", ".agent/rules/AGENTS.md", ".agents/rules/AGENTS.md"])
+    if "claude" in platforms or "all" in platforms:
+        destinations.append(".claude/rules/AGENTS.md")
+    if "cursor" in platforms or "all" in platforms:
+        destinations.extend([".cursor/rules/it-agent-team.mdc", ".cursorrules"])
+    if "copilot" in platforms or "all" in platforms:
+        destinations.append(".github/copilot-instructions.md")
+    if "windsurf" in platforms or "all" in platforms:
+        destinations.append(".windsurfrules")
+    for relative in destinations:
+        destination = target_repo / relative
+        if not destination.resolve().is_relative_to(target_repo):
+            print(f"[FAIL] Destination escapes the target repository: {relative}")
+            return 1
+        if destination.exists() and not replace:
+            print(f"[FAIL] Existing instructions preserved: {relative}. Use --replace to overwrite deliberately.")
+            return 1
     target_repo.mkdir(parents=True, exist_ok=True)
 
     print(f"Exporting IT Agent Team rules to project: {target_repo}")
@@ -101,12 +121,13 @@ def main() -> int:
         help="Target platform specification (default: all)",
     )
 
+    parser.add_argument("--replace", action="store_true", help="Explicitly allow replacing existing instruction files")
     args = parser.parse_args()
     root_dir = Path(__file__).resolve().parent.parent
     source_rules = root_dir / "rules" / "AGENTS.md"
     target_repo = Path(args.target).resolve()
 
-    return export_rules(source_rules, target_repo, [args.platform])
+    return export_rules(source_rules, target_repo, [args.platform], replace=args.replace)
 
 
 if __name__ == "__main__":
