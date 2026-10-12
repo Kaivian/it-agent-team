@@ -8,6 +8,16 @@ Use small workflow for localized changes, medium for multiple interfaces, and la
 
 The runtime returns dispatch envelopes, not live agents. Host delegation must actually be invoked. When unavailable, run serially and report that execution mode honestly.
 
+Implementation, repair and refactor roles use the [coding quality guide](../skills/agent-team/references/coding-quality.md) for readable responsibilities, meaningful names, explicit errors, clear data ownership and useful abstractions. Each coder self-reviews its owned diff; existing planning/review roles assess relevant criteria without adding mandatory workers or quality reports. Checks target behavior and meaningful regressions, and review findings distinguish concrete defects from optional preferences.
+
+## Frontend tasks
+
+Frontend agents inspect existing pages and component APIs, clarify unresolved requirements instead of guessing, and reuse components and design tokens. Questions remain available throughout the task. Local composition and existing variants are preferred; necessary shared changes require declared ownership, consumer impact review and regression checks. New styling uses Tailwind utilities for the installed version and theme, with `tailwindCSS.lint.suggestCanonicalClasses` diagnostics when available. Missing Tailwind setup is clarified before installation or migration; unavailable visual or editor-diagnostic checks are reported explicitly. See the [frontend workflow](../skills/agent-team/references/frontend-workflow.md), loaded only for relevant tasks.
+
+Keep frontend call-site `className` values limited to necessary local differences after using component defaults and variants. Repeated markup is consolidated into components, repeated visual options into variants, and shared style-only groups into named constants or helpers following project conventions. Tailwind class detection, override precedence and existing consumers must remain correct; there is no arbitrary class-count quota or automatic conversion to global CSS.
+
+Visual quality is assessed against the existing site or an agreed reference: clear hierarchy and primary action, consistent spacing and typography, relevant responsive and feedback states, keyboard access and focus. Available previews are inspected and observed issues refined before final verification. Component logic uses clear state ownership and derives values rather than synchronizing duplicate state. Design direction that the project and request do not settle is clarified with the user.
+
 ## Runtime entrypoint
 
 Resolve the plugin root from the actual `skills/<name>/SKILL.md` location. The scripts directory is two levels above the skill directory. Add `<plugin-root>/scripts` to `PYTHONPATH`, preserving existing entries, then use:
@@ -24,6 +34,12 @@ python -m supervisor --workspace <project> init --help
 ```
 
 Run every command with the same workspace and session ID. Claim commands return an attempt token; heartbeat, check and submit commands use that token to reject stale workers after recovery.
+
+## Token-efficient operation
+
+The workflow reuses loaded instructions, reads focused source sections and carries concise session notes across batch tasks. Worker context includes the assigned contract and relevant decisions, with paths to full artifacts. Questions can still be asked throughout each task with no fixed limit; evidence and integration requirements remain in force.
+
+Use global `--compact` before any subcommand to remove JSON indentation. For routine monitoring, `--compact status --summary` additionally omits repeated task contracts and results while retaining scheduling, expiry and verification-error signals. Regular `status` provides full details for diagnosis, and persisted reports retain complete evidence. Neither option changes runtime verification or exit codes.
 
 ## Configuration
 
@@ -82,4 +98,10 @@ To retain a legacy location, select it explicitly through the global `--state-di
 
 Batch skills run top-level tasks sequentially with separate session IDs and a combined outcome report. Failed tasks are not silently skipped or counted as complete.
 
+Clarification happens separately at each task's turn. The host asks only the current task's essential questions, waits for the answers, then starts that session. After it finishes, the host asks the next task's questions using any relevant earlier results. Questions for every task are never collected in one upfront prompt. Existing answers are reused, including on resume; tasks with enough information proceed directly. Auto batch follows the same timing for essential human input while resolving routine choices automatically. See the [batch workflow](../skills/agent-team/references/batch-workflow.md).
+
 Auto skills choose routine implementation details within the user's request. A user-proxy role cannot provide new permission, impersonate the user, or guarantee that essential human input will never be needed.
+
+Standard batch does not cap the number of questions or clarification rounds for a task. Unresolved requirements, preferences and constraints can all be clarified, with follow-up rounds until clear. A host tool's per-call question limit only affects how questions are split across calls. Auto batch still resolves routine choices automatically, with no fixed round limit for essential human input.
+
+Questions may be asked at any point during the current session, including implementation, verification and review. When new points need user input, the host asks immediately and waits for required answers before continuing affected work. Independent authorized work may continue while waiting. Answers and resulting changes to the task's scope or checks are recorded in that session; clarification is not limited to the opening questions.

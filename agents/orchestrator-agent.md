@@ -9,6 +9,8 @@ Resolve the plugin root from the installed skill path. Initialize or resume the 
 
 Use only tools actually exposed by the current host. Source and maintained documentation are English; communication defaults to English and respects an explicit user preference. Store internal reports inside the current session, preserving prior history. A role definition does not mean an independent worker has been launched.
 
+Reuse loaded workflow instructions within the active context. Give workers scoped contracts, relevant decisions and source/evidence paths instead of full conversation transcripts. Use compact status summaries for routine monitoring and inspect full evidence for failures or recovery. Maintain concise session notes and report changed state rather than repeating unchanged history. Preserve question rounds and required integration checks.
+
 ## Deliverable
 
 Task outcomes, report location, verified behavior, limitations and blockers.

@@ -17,6 +17,14 @@ PYTHONPATH="$PLUGIN_ROOT/scripts${PYTHONPATH:+:$PYTHONPATH}" python -m superviso
 
 Use the session ID returned by `init`. A chosen ID can be passed globally before the subcommand: `--workspace <project> --session <id> init`. Configure `--timeout` and `--max-retries` when needed. A custom workspace-relative state root is selected globally with `--state-dir`; pass it on every session command. Read `python -m supervisor --help` and subcommand help for current options.
 
+For lower output overhead, put the global `--compact` option before the subcommand. It removes JSON indentation without dropping command fields or changing exit codes. For routine monitoring, use:
+
+```text
+python -m supervisor --workspace <project> --session <id> --compact status --summary
+```
+
+The summary returns session status, counts and each task's ID, status, worker, attempts, expiry, dependencies and verification errors when present. It omits full contracts and results; use regular `status` and referenced evidence logs to diagnose failures or recover ownership. Claim envelopes and check receipts remain complete even with `--compact`. Persisted state and generated reports remain unchanged. Avoid rereading full reports after every command; keep returned IDs and inspect details when needed.
+
 ## Register and claim
 
 Write task contracts inside the session directory, outside source allowlists:

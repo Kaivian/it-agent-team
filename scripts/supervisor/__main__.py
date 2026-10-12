@@ -13,6 +13,7 @@ def parser():
     root = argparse.ArgumentParser(description=__doc__)
     root.add_argument("--workspace", required=True, type=Path)
     root.add_argument("--session")
+    root.add_argument("--compact", action="store_true", help="Emit JSON without indentation; place before the subcommand")
     root.add_argument("--state-dir", default=".agent-team", help="Workspace-relative state directory; .gemini preserves legacy placement")
     commands = root.add_subparsers(dest="command", required=True)
     init = commands.add_parser("init")
@@ -34,13 +35,28 @@ def parser():
             command.add_argument("argv", nargs=argparse.REMAINDER)
         elif name == "submit":
             command.add_argument("--result", type=Path, required=True)
-    commands.add_parser("status")
+    status = commands.add_parser("status")
+    status.add_argument("--summary", action="store_true", help="Omit repeated contracts and results; retain scheduling and failure signals")
     commands.add_parser("report")
     recovery = commands.add_parser("recover")
     recovery.add_argument("--task", required=True)
     recovery.add_argument("--confirm-worker-stopped", action="store_true")
     recovery.add_argument("--retry", action="store_true")
     return root
+
+
+def summarize_status(status):
+    """Project a status response without changing persisted state or reports."""
+    tasks = []
+    counts = {}
+    for task in status["tasks"]:
+        counts[task["status"]] = counts.get(task["status"], 0) + 1
+        item = {key: task[key] for key in ("task_id", "status", "worker", "attempts", "expired", "dependencies")}
+        errors = (task.get("result") or {}).get("verification_errors")
+        if errors:
+            item["verification_errors"] = errors
+        tasks.append(item)
+    return {"session": status["session"], "status": status["status"], "counts": counts, "tasks": tasks}
 
 
 def main(argv=None):
@@ -68,11 +84,14 @@ def main(argv=None):
                 result = manager.heartbeat(args.task, args.worker, args.token)
             elif args.command == "status":
                 result = manager.status()
+                if args.summary:
+                    result = summarize_status(result)
             elif args.command == "report":
                 result = generate_report(manager)
             else:
                 result = recover(manager, args.task, args.confirm_worker_stopped, args.retry)
-        print(json.dumps(result, indent=2))
+        formatting = {"separators": (",", ":")} if args.compact else {"indent": 2}
+        print(json.dumps(result, **formatting))
         if args.command == "check" and result["exit_code"] != 0:
             return 1
         if args.command == "submit" and result["status"] == "FAILED":
